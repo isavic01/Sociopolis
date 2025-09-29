@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import WelcomePage from "./apps/welcome/pages/WelcomePage";
 import RegisterPage from "./apps/register/pages/register";
 import LoginPage from "./apps/auth/pages/login";
+import LandingPage from "./apps/landing/pages/landing"
 
 function GameLanding() { return <div><h1>Main Game page</h1><Link to="/lesson">Lessons</Link></div>; }
 function Lesson() { return <h1>Lesson</h1>; }
@@ -13,7 +14,7 @@ export default function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Welcome />} />
-        <Route path="/gamelanding" element={<GameLanding />} />
+        <Route path="/landing" element={<LandingPage/>} />
         <Route path="/auth" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/lesson/:id" element={<Lesson />} />

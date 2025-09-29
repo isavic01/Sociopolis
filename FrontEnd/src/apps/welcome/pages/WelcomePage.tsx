@@ -16,7 +16,7 @@ export default function WelcomePage() {
         </button>
         <button
           style={{ ...styles.button, background: "#4CAF50" }}
-          onClick={() => navigate("/lesson/1")}
+          onClick={() => navigate("/landing")}
         >
           Start Game
         </button>
