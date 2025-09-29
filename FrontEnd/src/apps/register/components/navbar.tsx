@@ -14,7 +14,7 @@ export const Navbar = () => {
       />
 
       <button
-        onClick={() => navigate('.../auth')}
+        onClick={() => navigate('/login')}
         className="button"
       >
         Login

@@ -3,7 +3,7 @@ import { SubmitButton } from './buttons'
 import { TermsModal } from './terms'
 import { PrivacyModal } from './terms'
 import { createUserWithEmailAndPassword } from 'firebase/auth' // adjust path as needed
-import { auth } from '../services/firebaseConfig' // adjust path as needed
+import { auth } from '../../services/firebaseConfig' // adjust path as needed (can move later)
 import { useNavigate } from 'react-router-dom'
 
 
