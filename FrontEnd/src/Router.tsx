@@ -14,8 +14,8 @@ export default function AppRouter() {
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/gamelanding" element={<GameLanding />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<RegisterPage />} />
+        <Route path="/auth" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/lesson/:id" element={<Lesson />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="*" element={<h1>404</h1>} />

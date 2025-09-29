@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+//import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../services/firebaseConfig'; // adjust if your path differs
 import { useNavigate, Link } from 'react-router-dom';
 import { SubmitButton } from '../../register/components/buttons'; //reused logic from register 
@@ -16,7 +16,7 @@ export default function LoginForm() {
     setErr(null);
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      //await signInWithEmailAndPassword(auth, email, password);
       nav('/gamelanding'); 
     } catch (e: any) {
       setErr(e?.message ?? 'Login failed');

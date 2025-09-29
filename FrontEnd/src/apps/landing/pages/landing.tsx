@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { HamburgerButton } from '../components/HamburgerButton'
+import { HamburgerButton } from '../components/hamburgerbutton'
 import { SideMenu } from '../components/sidemenu'
 
 export default function LandingPage() {

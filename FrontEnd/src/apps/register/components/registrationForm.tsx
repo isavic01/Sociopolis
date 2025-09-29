@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { SubmitButton } from './buttons'
 import { TermsModal } from './terms'
 import { PrivacyModal } from './terms'
-import { createUserWithEmailAndPassword } from 'firebase/auth' // adjust path as needed
+//import { createUserWithEmailAndPassword } from 'firebase/auth' // adjust path as needed
 import { auth } from '../../services/firebaseConfig' // adjust path as needed (can move later)
 import { useNavigate } from 'react-router-dom'
 
@@ -22,7 +22,7 @@ export default function RegisterScreen() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await createUserWithEmailAndPassword(auth, email, password)
+      //await createUserWithEmailAndPassword(auth, email, password)
       alert('Account created!')
       navigate('/login') //update with routes
     } catch (error: any) {
@@ -36,6 +36,7 @@ export default function RegisterScreen() {
       <h2 className="subheading">Let's create an account to get started.</h2>
 
       <form onSubmit={handleRegister}>
+        <div>
         <input
           className="input-box"
           placeholder="Display-Name"
@@ -44,7 +45,8 @@ export default function RegisterScreen() {
           onChange={(e) => setName(e.target.value)}
           required
         />
-
+        </div>
+        <div>
         <input
           className="input-box"
           type="number"
@@ -53,7 +55,7 @@ export default function RegisterScreen() {
           onChange={(e) => setAge(e.target.value)}
           required
         />
-
+        </div>
         <input
           className="input-box"
           placeholder="Email"
@@ -62,7 +64,7 @@ export default function RegisterScreen() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-
+        <div>
         <input
           className="input-box"
           type="password"
@@ -71,7 +73,8 @@ export default function RegisterScreen() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-
+        </div>
+        <div>
         <label className="check-box">
           <input
             type="checkbox"
@@ -98,14 +101,14 @@ export default function RegisterScreen() {
             </button>
           </span>
         </label>
-
+        </div>
         <SubmitButton
         label="Register"
         disabled={!accepted} />
       </form>
 
-      {showTerms && <TermsModal onClose={() => setShowTerms(false)} isOpen={false} />}
-      {showPrivacy && <PrivacyModal onClose={() => setShowPrivacy(false)} isOpen={false} />}
+      <TermsModal onClose={() => setShowTerms(false)} isOpen={showTerms} />
+      <PrivacyModal onClose={() => setShowPrivacy(false)} isOpen={showPrivacy} />
     </div>
   )
 }
