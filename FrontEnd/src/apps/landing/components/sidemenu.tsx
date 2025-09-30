@@ -3,22 +3,31 @@ import { MenuItem } from './menuitem'
 import { ProfilePanel } from './profilepanel'
 import { SettingsPanel } from './settingspanel'
 import { LeaderboardPanel } from './leaderboardpanel'
-
+import '../layout/sidemenu.css'
 
 export const SideMenu = ({ isOpen }: { isOpen: boolean }) => {
   const [activePanel, setActivePanel] = useState<string | null>(null)
 
-  return ( // CSS FOR sidepanel`fixed top-0 left-0 h-full w-64 bg-white shadow-lg transition-transform ${isOpen ? 'translate-x-0' : '-translate-x-full'}`
-    <div className={`side-panel`}>
-      <MenuItem label="Profile" onClick={() => {setActivePanel('profile')}} />
-      <MenuItem label="Settings" onClick={() => setActivePanel('settings')} />
-      <MenuItem label="Leaderboard" onClick={() => setActivePanel('leaderboard')} />
+  const togglePanel = (panel: string) => {
+    setActivePanel(prev => (prev === panel ? null : panel))
+  }
 
-      <div className="sidemenu-options">
-        {activePanel === 'profile' && <ProfilePanel />}
-        {activePanel === 'settings' && <SettingsPanel />}
-        {activePanel === 'leaderboard' && <LeaderboardPanel />}
+  return (
+    <div className={`side-menu-wrapper ${isOpen ? 'open' : 'closed'}`}>
+      <div className="menu-column">
+        <MenuItem label="Profile" onClick={() => togglePanel('profile')} />
+        <MenuItem label="Settings" onClick={() => togglePanel('settings')} />
+        <MenuItem label="Leaderboard" onClick={() => togglePanel('leaderboard')} />
       </div>
+
+      {/* Only show panel if menu is open */}
+      {isOpen && activePanel && (
+        <div className="panel-column">
+          {activePanel === 'profile' && <ProfilePanel />}
+          {activePanel === 'settings' && <SettingsPanel />}
+          {activePanel === 'leaderboard' && <LeaderboardPanel />}
+        </div>
+      )}
     </div>
   )
 }
