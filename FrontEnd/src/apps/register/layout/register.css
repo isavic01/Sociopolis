@@ -1,0 +1,119 @@
+.register-page {
+    background-color: #000000;
+}
+
+/* Navbar styling */
+.register-nav {
+  height: 7vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #FFFFFF;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.background-register {
+    width:100%;
+}
+
+.soci {
+    width: 10vw;
+    height: 10vw;
+    padding: 16px 16px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.back-icon {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.register-nav .button {
+  background-color: #e7e7e7;
+  color: #1a1a1a;
+  border: none;
+  padding: 8px 16px;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.register-nav .button:hover {
+  background-color: #e0e0e0;
+}
+
+/* Input fields */
+.input-box {
+  width: 100%;
+  padding: 10px 12px;
+
+  margin-bottom: 1rem;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s ease;
+}
+
+.input-box:focus {
+  border-color: #0078d4;
+  outline: none;
+}
+
+/* Checkbox and links */
+.check-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: #444444;
+}
+
+.check-box input[type="checkbox"] {
+  margin-top: 4px;
+}
+
+.link {
+  background: none;
+  border: none;
+  color: #0078d4;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+}
+
+.link:hover {
+  color: #005a9e;
+}
+
+/* Submit button (in SubmitButton component) */
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button[type="submit"]:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+button[type="submit"]:hover:not(:disabled) {
+  background-color: #005a9e;
+}
