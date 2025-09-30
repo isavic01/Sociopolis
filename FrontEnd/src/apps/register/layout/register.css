@@ -1,65 +1,76 @@
+/* Page layout */
 .register-page {
-    background-color: #000000;
+  background-color: #ffffff;
+  padding-left: 15vw;
+  padding-right: 15vw;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-/* Navbar styling */
+/* Navbar */
 .register-nav {
-  height: 7vh;
-  width: 100vw;
   position: fixed;
   top: 0;
   left: 0;
-  background-color: #FFFFFF;
+  height: 7vh;
+  width: 100%;
+  background-color: #ffffff;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding: 0 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0 2rem;
+
 }
 
-.background-register {
-    width:100%;
-}
-
-.soci {
-    width: 10vw;
-    height: 10vw;
-    padding: 16px 16px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
 .back-icon {
   width: 32px;
   height: 32px;
   cursor: pointer;
 }
 
+
 .register-nav .button {
-  background-color: #e7e7e7;
+  background-color: #f0f5fa; /* ← Change this to your desired login button color */
   color: #1a1a1a;
   border: none;
-  padding: 8px 16px;
-  font-weight: bold;
-  border-radius: 4px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
 .register-nav .button:hover {
-  background-color: #e0e0e0;
+  background-color: #d0d0d0; /* ← Optional hover color */
+}
+
+/* Registration form container */
+.background-register {
+  max-width: 40vw;
+  margin: auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+}
+
+/* Logo image */
+.soci {
+  width: 10vw;
+  height: 10vw;
+  margin: 1rem auto 1rem;
+  display: block;
 }
 
 /* Input fields */
 .input-box {
   width: 100%;
-  padding: 10px 12px;
-
+  padding: 0.75rem 1rem;
   margin-bottom: 1rem;
   border: 1px solid #cccccc;
-  border-radius: 4px;
+  border-radius: 8px;
   font-size: 1rem;
   background-color: #f9f9f9;
   transition: border-color 0.2s ease;
+  color: #000000;
 }
 
 .input-box:focus {
@@ -70,7 +81,6 @@
 /* Checkbox and links */
 .check-box {
   display: flex;
-  align-items: flex-start;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
   font-size: 0.9rem;
@@ -78,7 +88,7 @@
 }
 
 .check-box input[type="checkbox"] {
-  margin-top: 4px;
+  margin-right: 0.5rem;
 }
 
 .link {
@@ -95,14 +105,14 @@
   color: #005a9e;
 }
 
-/* Submit button (in SubmitButton component) */
+/* Submit button */
 button[type="submit"] {
   width: 100%;
-  padding: 12px;
+  padding: 0.75rem;
   background-color: #0078d4;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   font-weight: bold;
   font-size: 1rem;
   cursor: pointer;
