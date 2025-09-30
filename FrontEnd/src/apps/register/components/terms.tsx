@@ -9,7 +9,7 @@ export const TermsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
   if (!isOpen) return null
 
   return (
-    <div className="background-nofocus">
+    <div className="terms-overlay">
       <div className="terms-box">
         <h2 className="header">Terms & Conditions</h2>
         <ol className = "ordered-list">
@@ -130,7 +130,7 @@ export const PrivacyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
   if (!isOpen) return null
 
   return (
-    <div className="background-nofocus">
+    <div className="terms-overlay">
       <div className="terms-box">
         <h2 className="header">Privacy Policy</h2>
         <p className="text mb-2">Last Updated: September 25, 2025</p>

@@ -8,15 +8,15 @@ export default function WelcomePage() {
       <h1 style={styles.title}>Welcome to Sociopolis!</h1>
 
       <div style={styles.buttonBox}>
-        <button style={styles.button} onClick={() => navigate("/login")}>
+        <button style={styles.button} onClick={() => navigate("/auth")}>
           Log In
         </button>
-        <button style={styles.button} onClick={() => navigate("/signup")}>
+        <button style={styles.button} onClick={() => navigate("/register")}>
           Sign Up
         </button>
         <button
           style={{ ...styles.button, background: "#4CAF50" }}
-          onClick={() => navigate("/lesson/1")}
+          onClick={() => navigate("/landing")}
         >
           Start Game
         </button>

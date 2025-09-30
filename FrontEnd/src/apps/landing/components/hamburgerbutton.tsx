@@ -5,9 +5,9 @@ export const HamburgerButton = ({ onClick }: { onClick: () => void }) => (
     aria-label="Open menu"
   >
     <img
-      src="/assets/hamburger-icon.png" //adjust once imported and created
+      src="/src/assets/hamburger.png" //adjust once imported and created
       alt="Menu Expand Button"
-      className="icon"
+      className="icon-button"
     />
   </button>
 )

@@ -1,0 +1,129 @@
+/* Page layout */
+.register-page {
+  background-color: #ffffff;
+  padding-left: 15vw;
+  padding-right: 15vw;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Navbar */
+.register-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 7vh;
+  width: 100%;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+
+}
+
+.back-icon {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+
+
+.register-nav .button {
+  background-color: #f0f5fa; /* ← Change this to your desired login button color */
+  color: #1a1a1a;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.register-nav .button:hover {
+  background-color: #d0d0d0; /* ← Optional hover color */
+}
+
+/* Registration form container */
+.background-register {
+  max-width: 40vw;
+  margin: auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+}
+
+/* Logo image */
+.soci {
+  width: 10vw;
+  height: 10vw;
+  margin: 1rem auto 1rem;
+  display: block;
+}
+
+/* Input fields */
+.input-box {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s ease;
+  color: #000000;
+}
+
+.input-box:focus {
+  border-color: #0078d4;
+  outline: none;
+}
+
+/* Checkbox and links */
+.check-box {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: #444444;
+}
+
+.check-box input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.link {
+  background: none;
+  border: none;
+  color: #0078d4;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+}
+
+.link:hover {
+  color: #005a9e;
+}
+
+/* Submit button */
+button[type="submit"] {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button[type="submit"]:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+button[type="submit"]:hover:not(:disabled) {
+  background-color: #005a9e;
+}
