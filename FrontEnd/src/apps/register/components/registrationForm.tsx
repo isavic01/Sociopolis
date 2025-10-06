@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { SubmitButton } from './buttons'
 import { TermsModal } from './terms'
 import { PrivacyModal } from './terms'
-//import { createUserWithEmailAndPassword } from 'firebase/auth' // adjust path as needed
-import { auth } from '../../services/firebaseConfig' // adjust path as needed (can move later)
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { doc, setDoc } from 'firebase/firestore'
+import { auth, db } from '../../services/firebaseConfig'
 import { useNavigate } from 'react-router-dom'
 
 
@@ -19,16 +20,29 @@ export default function RegisterScreen() {
 
   const navigate = useNavigate()
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault()
-    try {
-      //await createUserWithEmailAndPassword(auth, email, password)
-      alert('Account created!')
-      navigate('/login') //update with routes
-    } catch (error: any) {
-      alert(`Registration Error: ${error.message}`)
-    }
+  const isValidPassword = (password: string) => {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/
+  return regex.test(password)
   }
+  const [passwordError, setPasswordError] = useState('')
+  const handleRegister = async (e: React.FormEvent) => {
+  e.preventDefault()
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+    const user = userCredential.user
+    await setDoc(doc(db, 'users', user.uid), {
+      displayName: name,
+      age: Number(age),
+      termsAccepted: true,
+      xp: 0,
+    })
+
+    alert('Account created!')
+    navigate('/auth')
+  } catch (error: any) {
+    alert(`Registration Error: ${error.message}`)
+  }
+}
 
   return (
     <div className="background-register">
@@ -72,7 +86,11 @@ export default function RegisterScreen() {
           type="password"
           placeholder="Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => {
+           const value = e.target.value
+            setPassword(value)
+            setPasswordError(isValidPassword(value) ? '' : 'Password must be at least 6 characters and include uppercase, lowercase, and a number.')
+          }}
           required
         />
         </div>
