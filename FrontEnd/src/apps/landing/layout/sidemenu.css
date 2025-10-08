@@ -93,6 +93,29 @@ Wrapper for the entire side menu
   left: 0.7vh;
 }
 
+.position {
+  width: 2rem;
+  text-align: center;
+  font-weight: bold;
+  color: #0078d4;
+}
+
+.name {
+  flex-grow: 1;
+  padding-left: 1rem;
+}
+
+.xp {
+  font-weight: 600;
+  color: #0078d4;
+}
+
+.leaderboard-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
 @media (max-width: 1250px) {
 
 /* When menu is open */
