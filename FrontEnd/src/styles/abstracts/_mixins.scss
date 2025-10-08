@@ -1,0 +1,86 @@
+@use "sass:map";
+@use "sass:string";
+@use "../tokens/typography" as typo;
+@use "../abstracts/functions" as fn;
+
+// Generic emitter for color roles
+@mixin emit-theme-vars($roles, $prefix: null) {
+  @each $key, $val in $roles {
+    $name: if($prefix == null, $key, #{$prefix}-#{$key});
+    --color-#{$name}: #{$val};
+  }
+}
+
+/// Exports font families, defaults, and per-variant metrics as CSS vars.
+/// `$selector` is the scope (defaults to `:root`).
+@mixin export-font-vars($selector: ":root") {
+  #{string.unquote($selector)} {
+    @each $role, $fam in typo.$font-families {
+      --font-family-#{$role}: #{$fam};
+    }
+
+    @each $role, $w in typo.$font-default-weight {
+      --font-#{$role}-default-weight: #{$w};
+    }
+
+    @each $role, $props in typo.$font-default-props {
+      @if map.has-key($props, optical-sizing) {
+        --font-#{$role}-optical-sizing: #{map.get($props, optical-sizing)};
+      }
+      @if map.has-key($props, style) {
+        --font-#{$role}-style: #{map.get($props, style)};
+      }
+      @if map.has-key($props, variant-numeric) {
+        --font-#{$role}-variant-numeric: #{map.get($props, variant-numeric)};
+      }
+    }
+
+    @each $role, $variants in typo.$font-sizes {
+      @each $variant, $props in $variants {
+        $id: fn.token-id($role, $variant);
+        --font-#{$id}-size-min: #{map.get($props, min)};
+        --font-#{$id}-size-max: #{map.get($props, max)};
+        --font-#{$id}-line-height: #{map.get($props, lh)};
+        --font-#{$id}-tracking: #{map.get($props, track)};
+        $w: fn.font-weight-for($role, $variant);
+        @if $w != null {
+          --font-#{$id}-weight: #{$w};
+        }
+      }
+    }
+  }
+}
+
+/// Applies token `$role.$variant` using CSS vars for family, weight, size, line-height, and tracking.
+@mixin type($role, $variant) {
+  $props: fn.font-props($role, $variant);
+  @if $props == null {
+    @warn "Unknown token `#{$role}.#{$variant}`";
+  } @else {
+    $id: fn.token-id($role, $variant);
+
+    font-family: var(--font-family-#{$role});
+    font-weight: var(--font-#{$id}-weight, var(--font-#{$role}-default-weight));
+    font-style: var(--font-#{$role}-style, normal);
+    font-size: var(--font-#{$id}-size-min); // replace with clamp() if desired
+    line-height: var(--font-#{$id}-line-height);
+    letter-spacing: var(--font-#{$id}-tracking);
+    font-optical-sizing: var(--font-#{$role}-optical-sizing, auto);
+    font-variant-numeric: var(--font-#{$role}-variant-numeric, normal);
+  }
+}
+
+@mixin display($variant) { @include type(display, $variant); }
+@mixin label($variant)   { @include type(label, $variant); }
+@mixin button($variant)  { @include type(button, $variant); }
+@mixin heading($variant) { @include type(heading, $variant); }
+@mixin body($variant)    { @include type(body, $variant); }
+
+// Example fluid sizing helper (optional)
+// @mixin apply-font-size($id) {
+//   font-size: clamp(
+//     var(--font-#{$id}-size-min),
+//     var(--font-#{$id}-size-min),
+//     var(--font-#{$id}-size-max)
+//   );
+// }

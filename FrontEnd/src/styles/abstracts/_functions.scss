@@ -1,0 +1,50 @@
+@use "sass:map";
+@use "../tokens/typography" as typo;
+@use "../tokens/tonals" as tones;
+
+/// Single source of truth for tones
+@function tone($family, $step) {
+  @if not map.has-key(tones.$tonal-swatches, $family) {
+    @error "Unknown tonal family `#{$family}`.";
+  }
+  $swatch: map.get(tones.$tonal-swatches, $family);
+  @if not map.has-key($swatch, $step) {
+    @error "Unknown step `#{$step}` for `#{$family}` (expected 5..95).";
+  }
+  @return map.get($swatch, $step);
+}
+
+/// Returns metrics map for `$role.$variant` from `$font-sizes`; null if missing.
+@function font-props($role, $variant) {
+  @if map.has-key(typo.$font-sizes, $role) and map.has-key(map.get(typo.$font-sizes, $role), $variant) {
+    @return map.get(map.get(typo.$font-sizes, $role), $variant);
+  }
+  @return null;
+}
+
+/// Resolves weight via overrides, else role default; returns a number.
+@function font-weight-for($role, $variant) {
+  $w: null;
+  @if map.has-key(typo.$font-weight-overrides, $role) {
+    $over: map.get(typo.$font-weight-overrides, $role);
+    @if map.has-key($over, $variant) {
+      $w: map.get($over, $variant);
+    }
+  }
+  @return if($w != null, $w, map.get(typo.$font-default-weight, $role));
+}
+
+/// Returns font-family list for `$role`.
+@function font-family-for($role) {
+  @return map.get(typo.$font-families, $role);
+}
+
+/// Returns default props map for `$role`, or empty map.
+@function font-default-props-for($role) {
+  @return if(map.has-key(typo.$font-default-props, $role), map.get(typo.$font-default-props, $role), ());
+}
+
+/// Builds "role-variant" id string for CSS var names.
+@function token-id($role, $variant) {
+  @return #{$role}-#{$variant};
+}

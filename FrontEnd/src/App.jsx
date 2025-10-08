@@ -1,35 +1,65 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
+import "./styles/main.scss";
+
+const bodyCopy = `Design tokens drive consistent typography, motion, and color across Sociopolis interfaces. Adjust copy, spacing, and layout without redefining the core scale.`;
+const leadCopy = `These samples pull directly from the new typography and color maps so you can confirm the mixins compile to usable CSS variables.`;
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.classList.toggle("theme-dark", theme === "dark");
+    document.documentElement.classList.toggle("theme-light", theme === "light");
+  }, [theme]);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="app">
+      <section className="test-card">
+        <p className="subheading">Typography Tokens</p>
+        <h1 className="h1">Sociopolis Display Scale</h1>
+        <h2 className="h2">Design System Playground</h2>
+        <p className="lead">{leadCopy}</p>
+        <p className="text">{bodyCopy}</p>
+
+        <div className="button-row">
+          <button type="button" className="btn-form">
+            Submit Form
+          </button>
+          <button type="button" className="btn-cta">
+            Call To Action
+          </button>
+          <button type="button" className="btn-sm">
+            Secondary
+          </button>
+        </div>
+
+        <div className="test-labels">
+          <span className="label-strong">Label Strong</span>
+          <span className="label">Label Base</span>
+        </div>
+
+        <div className="theme-toggle">
+          <span className="label">Theme</span>
+          <button
+            type="button"
+            onClick={() => setTheme("light")}
+            disabled={theme === "light"}
+          >
+            Light
+          </button>
+          <button
+            type="button"
+            onClick={() => setTheme("dark")}
+            disabled={theme === "dark"}
+          >
+            Dark
+          </button>
+        </div>
+      </section>
+    </div>
+  );
 }
 
-export default App
+export default App;

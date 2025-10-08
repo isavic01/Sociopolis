@@ -1,0 +1,20 @@
+@use "../abstracts/mixins" as mixins;
+
+@include mixins.export-font-vars();
+
+.h1 { @include mixins.display(xl); }
+.h2 { @include mixins.display(lg); }
+.h3 { @include mixins.display(md); }
+.h4 { @include mixins.display(sm); }
+
+.subheading { @include mixins.heading(sub); }
+
+p, .text { @include mixins.body(md); }
+.lead { @include mixins.body(lead); }
+
+.label-strong { @include mixins.label(md-700); }
+.label { @include mixins.label(md-600); }
+
+.btn-form { @include mixins.button(form); }
+.btn-cta  { @include mixins.button(cta); }
+.btn-sm   { @include mixins.button(sm); }
