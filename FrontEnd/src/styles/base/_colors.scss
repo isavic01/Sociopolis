@@ -1,0 +1,84 @@
+@use 'sass:map';
+@use '../abstracts/mixins' as mx;
+@use '../tokens/tonals' as color;
+@use '../tokens/themes' as th;
+
+/* ---------------------------
+   ROOT VARIABLES (DEFAULT)
+---------------------------- */
+:root { @include mx.emit-theme-vars(color.$seeded-keys, 'seed'); }
+
+/* 2) Map UI semantics (your naming layer) */
+:root {
+  /* (Optional) base + text semantics from the ramp */
+  --color-bg-base:           var(--color-b-95);
+  --color-bg-base-dark:      var(--color-b-5);
+
+ /* nav */
+  --color-bg-nav-top:        var(--color-b-95);
+  --color-bg-nav-left:       var(--color-seed-bg-nav-left);
+  --color-bg-nav-body:       var(--color-seed-bg-nav-body);
+
+  --color-bg-nav-top-dark:   var(--color-b-15);
+  --color-bg-nav-left-dark:  var(--color-b-30);
+  --color-bg-nav-body-dark:  var(--color-b-60);
+
+  /* Backgrounds */
+  --color-bg-surface:        var(--color-seed-bg-surface);
+  --color-bg-surface-dark:   var(--color-seed-bg-surface-dark);
+
+  /* Borders & focus */
+  --color-progress-border:   var(--color-seed-progress-border);
+  --color-focus-halo:        var(--color-seed-focus-halo);
+
+  /* Status */
+  --color-success-soft:      var(--color-seed-success-soft);
+  --color-success-contrast:  var(--color-seed-success-contrast);
+  --color-warning-soft:      var(--color-seed-warning-soft);
+  --color-warning-contrast:  var(--color-seed-warning-contrast);
+
+  /* Card text */
+  --color-text-card-primary:   var(--color-seed-text-card-primary);
+  --color-text-card-secondary: var(--color-seed-text-card-secondary);
+
+  --color-text-primary:      var(--color-b-10);  /* ~rgb(19,30,41) */
+  --color-text-secondary:    var(--color-b-20);  /* ~rgb(40,61,82) */
+  --color-text-primary-dark: var(--color-b-95);
+  --color-text-secondary-dark: var(--color-b-15);
+
+   /* Tonal Blues (sea-blue family) — your full list here */
+  --color-b-5:   #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 5)};
+  --color-b-10:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 10)};
+  --color-b-15:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 15)};
+  --color-b-20:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 20)};
+  --color-b-25:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 25)};
+  --color-b-30:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 30)};
+  --color-b-35:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 35)};
+  --color-b-40:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 40)};
+  --color-b-45:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 45)};
+  --color-b-50:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 50)};
+  --color-b-55:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 55)};
+  --color-b-60:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 60)};
+  --color-b-65:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 65)};
+  --color-b-70:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 70)};
+  --color-b-75:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 75)};
+  --color-b-80:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 80)};
+  --color-b-85:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 85)};
+  --color-b-90:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 90)};
+  --color-b-95:  #{map.get(map.get(color.$tonal-swatches, 'sea-blue'), 95)};
+}
+
+/* Default = light */
+// :root { @include mx.emit-theme-vars(th.$theme-light); }
+
+// /* Respect system preference */
+// @media (prefers-color-scheme: dark) {
+//   :root { @include mx.emit-theme-vars(th.$theme-dark); }
+// }
+
+// /* Manual overrides (attribute or class) */
+// [data-theme='light'],
+// .theme-light { @include mx.emit-theme-vars(th.$theme-light); }
+
+// [data-theme='dark'],
+// .theme-dark  { @include mx.emit-theme-vars(th.$theme-dark); }

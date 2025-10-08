@@ -1,0 +1,26 @@
+// --------------------------------------------------------------------------
+//  MOTION TIMING & EASINGS
+// --------------------------------------------------------------------------
+//
+// Motion tokens unify animation feel across interactions.
+//
+$motion-durations: (
+  "fast": 150ms,
+  "base": 250ms,
+  "slow": 400ms,
+);
+
+$motion-easings: (
+  "in": cubic-bezier(0.4, 0, 1, 1),
+  "out": cubic-bezier(0, 0, 0.2, 1),
+  "in-out": cubic-bezier(0.4, 0, 0.2, 1),
+  "emphasized": cubic-bezier(0.2, 0, 0, 1),
+);
+
+$z-layers: (
+  "base": 0,
+  "dropdown": 10,
+  "sticky": 20,
+  "overlay": 30,
+  "modal": 40,
+);

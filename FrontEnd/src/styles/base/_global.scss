@@ -1,0 +1,104 @@
+@use "../base/colors";
+@use "../base/fonts";
+@use "../abstracts/mixins" as mixins;
+
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  font-weight: var(--font-body-default-weight);
+  margin: 0;
+  min-height: 100vh;
+  padding: 2rem;
+  display: grid;
+  gap: 2rem;
+}
+
+section.test-card {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-progress-border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.05);
+}
+
+h1,
+.h1 { @include mixins.display(xl); margin: 0 0 0.5em; }
+
+h2,
+.h2 { @include mixins.display(lg); margin: 0 0 0.5em; }
+
+h3,
+.h3 { @include mixins.display(md); margin: 0 0 0.75em; }
+
+h4,
+.h4 { @include mixins.display(sm); margin: 0 0 1em; }
+
+.subheading { @include mixins.heading(sub); text-transform: uppercase; letter-spacing: 0.08em; }
+
+p,
+.text { @include mixins.body(md); margin: 0 0 1.25em; }
+
+.lead { @include mixins.body(lead); margin-bottom: 1.5em; }
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.button-row > button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.85em 1.75em;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.button-row > button:focus-visible {
+  outline: 0.25rem solid var(--color-focus-halo);
+  outline-offset: 0.15rem;
+}
+
+.button-row > .btn-form {
+  @include mixins.button(form);
+  background: var(--color-success-soft);
+  color: var(--color-text-card-primary);
+}
+
+.button-row > .btn-cta {
+  @include mixins.button(cta);
+  background: var(--color-bg-nav-left);
+  color: var(--color-bg-base);
+}
+
+.button-row > .btn-sm {
+  @include mixins.button(sm);
+  background: var(--color-warning-soft);
+  color: var(--color-text-card-primary);
+}
+
+.test-labels {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.test-labels .label-strong { @include mixins.label(md-700); }
+.test-labels .label { @include mixins.label(md-600); }
+
+.theme-toggle {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.theme-toggle button {
+  @include mixins.button(sm);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-progress-border);
+  color: var(--color-text-primary);
+}

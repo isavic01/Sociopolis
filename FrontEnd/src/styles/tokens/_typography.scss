@@ -1,0 +1,91 @@
+// =======================================
+// TYPOGRAPHY TOKENS (DESIGN SYSTEM) — REMAKE
+// =======================================
+
+$font-families: (
+  display: ("Montserrat Alternates", ui-sans-serif, system-ui, sans-serif),
+  body:    ("Montserrat", ui-sans-serif, system-ui, sans-serif),
+  label:   ("Montserrat Alternates", ui-sans-serif, system-ui, sans-serif),
+  button:  ("Montserrat", ui-sans-serif, system-ui, sans-serif),
+  heading: ("Montserrat", ui-sans-serif, system-ui, sans-serif)
+);
+
+// ---------------------------------------
+// Shared optical and stylistic defaults
+// ---------------------------------------
+$font-default-props: (
+  display: (optical-sizing: auto, style: normal),
+  body:    (optical-sizing: auto, style: normal),
+  heading: (optical-sizing: auto, style: normal),
+  label:   (optical-sizing: auto, style: normal, variant-numeric: tabular-nums),
+  button:  (optical-sizing: auto, style: normal, variant-numeric: tabular-nums)
+);
+
+// ---------------------------------------
+// Available weights and defaults
+// ---------------------------------------
+$font-weights: (
+  display: (600, 700),
+  body:    (400, 500, 600),
+  heading: (600),
+  label:   (600, 700),
+  button:  (600, 700)
+);
+
+$font-default-weight: (
+  display: 600,
+  heading: 600,
+  body:    400,
+  label:   600,
+  button:  700
+);
+
+// ---------------------------------------
+// Fluid-friendly size tokens per role
+// Only min/max font-size, line-height, and tracking.
+// Build system converts to clamp().
+// ---------------------------------------
+$font-sizes: (
+  display: (
+    // Display (Montserrat Alternates)
+    xl: (min: 2.8125rem, max: 2.8125rem, lh: 1.08, track: -0.02em), // 45px / 700
+    lg: (min: 2.5rem,    max: 2.5rem,    lh: 1.10, track: -0.015em),// 40px / 700
+    md: (min: 1.875rem,  max: 1.875rem,  lh: 1.12, track: -0.01em), // 30px / 600
+    sm: (min: 1.5625rem, max: 1.5625rem, lh: 1.15, track: -0.005em) // 25px / 600
+  ),
+
+  label: (
+    // Small emphasis (Montserrat Alternates)
+    md-700: (min: 1rem, max: 1rem, lh: 1.25, track: 0.02em), // 16px / 700
+    md-600: (min: 1rem, max: 1rem, lh: 1.25, track: 0.02em)  // 16px / 600
+  ),
+
+  button: (
+    // Buttons (Montserrat)
+    form:   (min: 1.5625rem, max: 1.5625rem, lh: 1.05, track: 0.015em), // 25px / 600
+    cta:    (min: 1.125rem,  max: 1.125rem,  lh: 1.05, track: 0.015em), // 18px / 700
+    sm:     (min: 1rem,      max: 1rem,      lh: 1.05, track: 0.02em)   // 16px / 700
+  ),
+
+  heading: (
+    // Subheading (Montserrat)
+    sub: (min: 1.125rem, max: 1.125rem, lh: 1.35, track: 0em) // 18px / 600
+  ),
+
+  body: (
+    // Text (Montserrat)
+    md:   (min: 1rem,      max: 1rem,      lh: 1.6, track: 0em), // 16px / 400 (default body)
+    lead: (min: 1.5625rem, max: 1.5625rem, lh: 1.5, track: 0em)  // 25px / 400
+  )
+);
+
+// ---------------------------------------
+// Variant-specific weight overrides
+// ---------------------------------------
+$font-weight-overrides: (
+  display: (xl: 700, lg: 700, md: 600, sm: 600),
+  label:   (md-700: 700, md-600: 600),
+  button:  (form: 600, cta: 700, sm: 700),
+  heading: (sub: 600),
+  body:    (md: 400, lead: 400)
+);
