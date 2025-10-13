@@ -20,8 +20,22 @@ export default function RegisterScreen() {
 
   const navigate = useNavigate()
 
+    const isValidPassword = (password: string) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/
+    return regex.test(password)
+  }
+
+  const [passwordError, setPasswordError] = useState('')
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!isValidPassword(password)) {
+      setPasswordError('password must be at least 6 characters and include uppercase, lowercase, and a number')
+      return
+    } else {
+      setPasswordError('')
+    }
+
     try {
       const trimmedEmail = email.trim()
       const trimmedName = name.trim()
