@@ -12,8 +12,17 @@ export default function LoginScreen() {
   const handleLogin = async (e: React.FormEvent) => {
   e.preventDefault()
   try {
-    await signInWithEmailAndPassword(auth, email, password)
-    navigate('/landing') // or your target route
+    const cred = await signInWithEmailAndPassword(auth, email.trim(), password)
+    const user = cred.user
+    await user.reload()
+
+    if (!user.emailVerified) {
+      alert('Please verify your email before logging in.')
+      await auth.signOut()
+      return
+    }
+
+    navigate('/landing')
   } catch (err: any) {
     console.error('Login error:', err)
     alert(`Login failed: ${err.message}`)
