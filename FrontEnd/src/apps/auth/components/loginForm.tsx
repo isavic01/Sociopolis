@@ -23,9 +23,9 @@ export default function LoginScreen() {
 
   return (
     <div className="background-login">
-      <h1 className="heading">Welcome to Sociopolis!</h1>
+      <h1 className="h1">Welcome back to Sociopolis!</h1>
       <br></br>
-      <h2 className="subheading">Let's create an account to get started.</h2>
+      <h2 className="h3">Its great to see you again, have fun learning .</h2>
       <img className="soci" src="/src/assets/soci.png"></img>
 
       <form onSubmit={handleLogin}>

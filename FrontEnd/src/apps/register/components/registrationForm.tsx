@@ -45,16 +45,16 @@ export default function RegisterScreen() {
 }
 
   return (
-    <div className="background-register">
-      <h1 className="heading">Welcome to Sociopolis!</h1>
+    <div className= "container">
+      <h1 className="h1">Welcome to Sociopolis!</h1>
       <br></br>
-      <h2 className="subheading">Let's create an account to get started.</h2>
+      <h2 className="h3">Let's create an account to get started.</h2>
       <img className="soci" src="/src/assets/soci.png"></img>
 
       <form onSubmit={handleRegister}>
         <div>
         <input
-          className="input-box"
+          className="text"
           placeholder="Display-Name"
           type="text"
           value={name}
@@ -64,7 +64,7 @@ export default function RegisterScreen() {
         </div>
         <div>
         <input
-          className="input-box"
+          className="text"
           type="number"
           placeholder="Age"
           value={age}
@@ -73,7 +73,7 @@ export default function RegisterScreen() {
         />
         </div>
         <input
-          className="input-box"
+          className="text"
           placeholder="Email"
           type="email"
           value={email}
@@ -82,7 +82,7 @@ export default function RegisterScreen() {
         />
         <div>
         <input
-          className="input-box"
+          className="text"
           type="password"
           placeholder="Password"
           value={password}
@@ -132,6 +132,5 @@ export default function RegisterScreen() {
     </div>
   )
 }
-
 
 

@@ -3,7 +3,7 @@ import { Navbar } from '../components/navbar';
 
 export default function LoginPage() {
   return (
-    <div className="login-page">
+    <div className="container">
       <Navbar />
       <LoginForm />
     </div>

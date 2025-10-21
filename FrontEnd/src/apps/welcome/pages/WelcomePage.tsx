@@ -1,59 +1,34 @@
 import { useNavigate } from "react-router-dom";
+import '../layout/welcome.css'
 
 export default function WelcomePage() {
   const navigate = useNavigate();
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Welcome to Sociopolis!</h1>
+    <div>
+      <div className = "flex items-center px-4 py-3">
+        <img className="h-4 sm:h-6 md:h-8 lg:h-10 w-auto" src="/src/assets/svg/Sociopolis.svg"></img>
+      </div>
+      <div className= "container">
+      <h1 className = "h3" >The free, fun, effective way of learning sociology</h1>
 
-      <div style={styles.buttonBox}>
-        <button style={styles.button} onClick={() => navigate("/auth")}>
+      <div className = "buttonBox">
+        <button className ="button" style={{backgroundColor:"#6698CC"}}  onClick={() => navigate("/auth")}>
           Log In
         </button>
-        <button style={styles.button} onClick={() => navigate("/register")}>
+        <button className = "button" style={{backgroundColor:"#283D52"}} onClick={() => navigate("/register")}>
           Sign Up
         </button>
         <button
-          style={{ ...styles.button, background: "#4CAF50" }}
+          style={{backgroundColor:"#black"}}
+          className = "button"
           onClick={() => navigate("/landing")}
         >
-          Start Game
+          Test Landing
         </button>
+      </div>
       </div>
     </div>
   );
 }
 
-
-// quick inline style for now
-const styles = {
-  container: {
-    display: "flex",
-    flexDirection: "column" as const,
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100vh",
-   
-  },
-  title: {
-    fontSize: "2.5rem",
-    marginBottom: "2rem"
-  },
-  buttonBox: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "1rem",
-    width: "200px"
-  },
-  button: {
-    display: "block",
-    textAlign: "center" as const,
-    padding: "0.75rem",
-    fontSize: "1.2rem",
-    borderRadius: "8px",
-    background: "#f2d88f",
-    color: "black",
-    textDecoration: "none"
-  }
-};
