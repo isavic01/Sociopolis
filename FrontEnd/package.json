@@ -14,11 +14,13 @@
     "@react-navigation/native": "^7.1.17",
     "@tailwindcss/vite": "^4.1.13",
     "firebase": "^12.4.0",
+    "framer-motion": "^12.23.24",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.3",
     "tailwindcss": "^4.1.13",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
@@ -34,6 +36,7 @@
     "sass-embedded": "^1.93.2",
     "typescript": "^5.9.2",
     "vite": "^7.1.6",
+    "vite-plugin-svgr": "^4.5.0",
     "vitest": "^3.2.4"
   }
 }

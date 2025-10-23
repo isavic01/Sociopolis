@@ -4,6 +4,11 @@ import { SideMenu } from '../components/sidemenu'
 //temp place for reports header
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db, auth } from "../../services/firebaseConfig";
+import { Background } from '../components/background';
+// import { REGIONS } from './RegionDefs';
+// import { useEffect } from 'react';
+// import { useProgressStore } from '@/features/progress/progressStore'; /Users/isabelhernandez/Desktop/sociopolis/FrontEnd/src/features/progress/progressStore.ts
+// import { Hotspot } from './Hotspot';
 
 
 export default function LandingPage() {
@@ -52,6 +57,7 @@ async function handleReport() {
     <div className="side-menu">
       <HamburgerButton onClick={() => setMenuOpen(!menuOpen)} />
       <SideMenu isOpen={menuOpen} />
+      <Background/>
       {/* Main landing content */}
       <div style={{ marginTop: "30px", maxWidth: "600px" }}>
       <textarea
