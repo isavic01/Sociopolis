@@ -12,7 +12,7 @@ export const Navbar = () => {
         onClick={() => navigate(-1)}
       />
 
-      <button onClick={() => navigate('/signup')} className="button">
+      <button onClick={() => navigate('/register')} className="button">
         Sign up
       </button>
     </nav>

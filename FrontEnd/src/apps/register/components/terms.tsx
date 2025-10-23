@@ -11,10 +11,10 @@ export const TermsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
   return (
     <div className="terms-overlay">
       <div className="terms-box">
-        <h2 className="header">Terms & Conditions</h2>
-        <ol className = "ordered-list">
+        <h1 className="h1">Terms & Conditions</h1>
+        <ol className = "h2 p-2">
             <li>
-                <h2 className="subheader"> Eligibility </h2>
+                <h2 className="h2"> Eligibility </h2>
                 <ul className= "unordered-list">
                     <li className = "text">    You must provide accurate, current, and complete information when registering. </li>
                     <li className = "text">    If you are under 13, you may only use the site with the consent and supervision of a parent or legal guardian. </li>
@@ -22,7 +22,7 @@ export const TermsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                 </ul>
             </li>
             <li>
-                <h2 className="subheader"> Accounts </h2>
+                <h2 className="h2"> Accounts </h2>
                 <ul className= "unordered-list">
                     <li className = "text">    You are responsible for maintaining the confidentiality of your login credentials. </li>
                     <li className = "text">    You are responsible for all activity that occurs under your account. </li>
@@ -31,7 +31,7 @@ export const TermsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                 </ul>
             </li>
             <li>
-                <h2 className="subheader"> Use of the Service </h2>
+                <h2 className="h2"> Use of the Service </h2>
                 <ul className= "unordered-list">
                     <li className = "text">    Sociopolis is provided for educational purposes only. </li>
                     <li className = "text">    You agree not to misuse the service, including but not limited to: hacking, spamming, reverse engineering, or interfering with others’ use. </li>
@@ -40,7 +40,7 @@ export const TermsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                 </ul>
             </li>
             <li>
-                <h2 className="subheader"> Advertisements </h2>
+                <h2 className="h2"> Advertisements </h2>
                 <ul className= "unordered-list">
                     <li className = "text">    The free version of the service may include third-party advertisements. </li>
                     <li className = "text">    We are not responsible for the content of third-party ads or any products/services offered through them. </li>
@@ -48,7 +48,7 @@ export const TermsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                 </ul>
             </li>
             <li>
-                <h2 className="subheader"> Purchases (Ad-Free Tier) </h2>
+                <h2 className="h2"> Purchases (Ad-Free Tier) </h2>
                 <ul className= "unordered-list">
                     <li className = "text">    We may offer an optional paid subscription that removes ads. </li>
                     <li className = "text">    Payments are processed securely by a trusted third-party provider. We do not store full payment card details. </li>
@@ -57,14 +57,14 @@ export const TermsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                 </ul>
             </li>
             <li>
-                <h2 className="subheader"> Privacy </h2>
+                <h2 className="h2"> Privacy </h2>
                 <ul className= "unordered-list">
                     <li className = "text">    We collect and use personal information as described in our Privacy Policy. </li>
                     <li className = "text">    By using the service, you consent to our collection, use, and disclosure of information in accordance with that policy. </li>
                 </ul>
             </li>
             <li>
-                <h2 className="subheader"> Content & Accuracy </h2>
+                <h2 className="h2"> Content & Accuracy </h2>
                 <ul className= "unordered-list">
                     <li className = "text">    Educational materials and resources are provided “as is” and “as available.” </li>
                     <li className = "text">    We make no warranties regarding accuracy, completeness, reliability, or suitability for exams, work, or professional use. </li>
@@ -72,7 +72,7 @@ export const TermsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                 </ul>
             </li>
             <li>
-                <h2 className="subheader"> Termination </h2>
+                <h2 className="h2"> Termination </h2>
                 <ul className= "unordered-list">
                     <li className = "text">    We may suspend, restrict, or delete accounts that violate these Terms or applicable laws. </li>
                     <li className = "text">    You may terminate your account at any time by contacting us. </li>
@@ -80,7 +80,7 @@ export const TermsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                 </ul>
             </li>
             <li>
-                <h2 className="subheader"> Limitation of Liability </h2>
+                <h2 className="h2"> Limitation of Liability </h2>
                 <ul className= "unordered-list">
                     <li className = "text">    Sociopolis is provided free of charge (with optional paid features). </li>
                     <li className = "text">    To the maximum extent permitted by law, we are not liable for any indirect, incidental, consequential, or punitive damages arising from your use of the service. </li>
@@ -88,13 +88,13 @@ export const TermsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                 </ul>
             </li>
             <li>
-                <h2 className="subheader">  Indemnification </h2>
+                <h2 className="h2">  Indemnification </h2>
                 <ul className= "unordered-list">
                     <li className = "text">    You agree to indemnify and hold harmless Sociopolis, its affiliates, employees, and partners from any claims, damages, or expenses arising from your use of the service or violation of these Terms. </li>
                 </ul>
             </li>
             <li>
-                <h2 className="subheader"> Changes </h2>
+                <h2 className="h2"> Changes </h2>
                 <ul className= "unordered-list">
                     <li className = "text">   We may update these Terms from time to time. Updates will be posted with a new “Last Updated” date. </li>
                     <li className = "text">   If changes are material, we will provide reasonable notice (such as by email or in-app notification). </li>
@@ -102,7 +102,7 @@ export const TermsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                 </ul>
             </li>
             <li>
-                <h2 className="subheader"> Governing Law & Dispute Resolution </h2>
+                <h2 className="h2"> Governing Law & Dispute Resolution </h2>
                 <ul className= "unordered-list">
                     <li className = "text">   These Terms are governed by the laws of Florida. </li>
                     <li className = "text">   Any disputes will be resolved exclusively in the courts of Florida, unless otherwise required by applicable law. </li>
@@ -110,7 +110,7 @@ export const TermsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                 </ul>
             </li>
             <li>
-                <h2 className="subheader"> Contact Us </h2>
+                <h2 className="h2"> Contact Us </h2>
                 <p className = "text">   If you have questions about these Terms, please contact us at: <br></br>
                 Sociopolis
                 Email: <a href="mailto:privacy@sociopolis.com" className="text-blue-600 underline">privacy@sociopolis.com</a>
@@ -118,7 +118,7 @@ export const TermsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
             </li>
 
         </ol>
-        <button onClick={onClose} className="button">
+        <button onClick={onClose} className="button text">
           Close
         </button>
       </div>
@@ -132,16 +132,16 @@ export const PrivacyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
   return (
     <div className="terms-overlay">
       <div className="terms-box">
-        <h2 className="header">Privacy Policy</h2>
-        <p className="text mb-2">Last Updated: September 25, 2025</p>
-        <p className="text mb-4">
+        <h1 className="h1">Privacy Policy</h1>
+        <p className="text">Last Updated: September 25, 2025</p>
+        <p className="text">
           Sociopolis (“we,” “our,” or “us”) values your privacy. This Privacy Policy explains what information we collect, how we use it, and the choices you have regarding your personal data. By using our services, you agree to the practices described below.
         </p>
 
-        <ol className="ordered-list">
+        <ol className="h2 p-2">
           <li>
-            <h2 className="subheader">Information We Collect</h2>
-            <ul className="unordered-list">
+            <h2 className="h2">Information We Collect</h2>
+            <ul className="text">
               <li className="text">Name (to display on the leaderboard)</li>
               <li className="text">Age (to comply with age-related laws and restrictions)</li>
               <li className="text">Email address (for login, account recovery, and communication)</li>
@@ -152,8 +152,8 @@ export const PrivacyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           </li>
 
           <li>
-            <h2 className="subheader">How We Use Your Information</h2>
-            <ul className="unordered-list">
+            <h2 className="h2">How We Use Your Information</h2>
+            <ul className="text">
               <li className="text">Provide account access and core site functionality</li>
               <li className="text">Display your chosen name on the global leaderboard</li>
               <li className="text">Send service-related updates and support messages</li>
@@ -164,7 +164,7 @@ export const PrivacyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           </li>
 
           <li>
-            <h2 className="subheader">Advertising</h2>
+            <h2 className="h2">Advertising</h2>
             <ul className="unordered-list">
               <li className="text">Free version displays third-party ads</li>
               <li className="text">Advertisers may use cookies or similar technologies</li>
@@ -174,7 +174,7 @@ export const PrivacyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           </li>
 
           <li>
-            <h2 className="subheader">Purchases & Payments</h2>
+            <h2 className="h2">Purchases & Payments</h2>
             <ul className="unordered-list">
               <li className="text">Payments processed securely by third-party provider</li>
               <li className="text">We do not store full card details</li>
@@ -183,7 +183,7 @@ export const PrivacyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           </li>
 
           <li>
-            <h2 className="subheader">Children’s Privacy</h2>
+            <h2 className="h2">Children’s Privacy</h2>
             <ul className="unordered-list">
               <li className="text">Under 13 requires verified parental consent</li>
               <li className="text">We comply with COPPA</li>
@@ -192,7 +192,7 @@ export const PrivacyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           </li>
 
           <li>
-            <h2 className="subheader">Data Storage & Security</h2>
+            <h2 className="h2">Data Storage & Security</h2>
             <ul className="unordered-list">
               <li className="text">Passwords encrypted, never stored in plain text</li>
               <li className="text">We use reasonable safeguards to protect your data</li>
@@ -202,7 +202,7 @@ export const PrivacyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           </li>
 
           <li>
-            <h2 className="subheader">Your Rights</h2>
+            <h2 className="h2">Your Rights</h2>
             <ul className="unordered-list">
               <li className="text">Access, correct, or delete your data</li>
               <li className="text">Opt out of personalized ads or analytics</li>
@@ -212,7 +212,7 @@ export const PrivacyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           </li>
 
           <li>
-            <h2 className="subheader">Changes to This Policy</h2>
+            <h2 className="h2">Changes to This Policy</h2>
             <ul className="unordered-list">
               <li className="text">We may update this policy periodically</li>
               <li className="text">Material changes will be announced via email or site notice</li>
@@ -221,7 +221,7 @@ export const PrivacyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           </li>
 
           <li>
-            <h2 className="subheader">Contact Us</h2>
+            <h2 className="h2">Contact Us</h2>
             <p className="text">
               If you have questions or concerns about this Privacy Policy, please contact us at:<br />
               Sociopolis<br />
@@ -230,7 +230,7 @@ export const PrivacyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           </li>
         </ol>
 
-        <button onClick={onClose} className="button">
+        <button onClick={onClose} className="button text">
           Close
         </button>
       </div>
