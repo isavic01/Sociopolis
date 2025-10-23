@@ -45,8 +45,10 @@
 {
   "compilerOptions": {
     // for modern frontend bundlers
+    "baseUrl": ".", 
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "paths": { "@/*": ["./src/*"] },
     "target": "ES2020",
 
     // React
@@ -61,5 +63,5 @@
     "declaration": false,           // not needed for an app
     "isolatedModules": true
   },
-  "include": ["src"]
+  
 }
