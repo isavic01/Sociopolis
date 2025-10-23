@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { SubmitButton } from './buttons'
 import { TermsModal } from './terms'
 import { PrivacyModal } from './terms'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { doc, setDoc } from 'firebase/firestore'
-import { auth, db } from '../../services/firebaseConfig'
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth' // adjust path as needed
+import { auth, db } from '../../services/firebaseConfig' // adjust path as needed (can move later)
 import { useNavigate } from 'react-router-dom'
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 
 
 export default function RegisterScreen() {
@@ -16,33 +16,58 @@ export default function RegisterScreen() {
   const [accepted, setAccepted] = useState(false)
   const [showTerms, setShowTerms] = useState(false)
   const [showPrivacy, setShowPrivacy] = useState(false)
-
+  const [passwordError, setPasswordError] = useState('')
 
   const navigate = useNavigate()
 
-  const isValidPassword = (password: string) => {
-  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/
-  return regex.test(password)
+    const isValidPassword = (password: string) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/
+    return regex.test(password)
   }
-  const [passwordError, setPasswordError] = useState('')
-  const handleRegister = async (e: React.FormEvent) => {
-  e.preventDefault()
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-    const user = userCredential.user
-    await setDoc(doc(db, 'users', user.uid), {
-      displayName: name,
-      age: Number(age),
-      termsAccepted: true,
-      xp: 0,
-    })
 
-    alert('Account created!')
-    navigate('/auth')
-  } catch (error: any) {
-    alert(`Registration Error: ${error.message}`)
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!isValidPassword(password)) {
+      setPasswordError('password must be at least 6 characters and include uppercase, lowercase, and a number')
+      return
+    } 
+    else {
+      setPasswordError('')
+    }
+
+    try {
+      const trimmedEmail = email.trim()
+      const trimmedName = name.trim()
+      const numericAge = Number(age)
+
+      const cred = await createUserWithEmailAndPassword(auth, trimmedEmail, password)
+      const user = cred.user
+
+      if (trimmedName) {
+        await updateProfile(user, { displayName: trimmedName })
+      }
+
+      await setDoc(doc(db, 'users', user.uid), {
+        displayName: trimmedName,
+        age: numericAge,
+        termsAccepted: true,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        xp: 0,
+        level: 0,
+        admin: false,
+        email: trimmedEmail,
+        emailVerified: false
+      })
+
+      await sendEmailVerification(user)
+      
+      alert('Account created! Please check your email for verification!')
+      navigate('/auth') //update with routes
+    } catch (error: any) {
+      alert(`Registration Error: ${error.message}`)
+    }
   }
-}
 
   return (
     <div className= "container">
@@ -52,7 +77,6 @@ export default function RegisterScreen() {
       <img className="soci" src="/src/assets/soci.png"></img>
 
       <form onSubmit={handleRegister}>
-        <div>
         <input
           className="text"
           placeholder="Display-Name"
@@ -61,8 +85,7 @@ export default function RegisterScreen() {
           onChange={(e) => setName(e.target.value)}
           required
         />
-        </div>
-        <div>
+
         <input
           className="text"
           type="number"
@@ -71,7 +94,7 @@ export default function RegisterScreen() {
           onChange={(e) => setAge(e.target.value)}
           required
         />
-        </div>
+
         <input
           className="text"
           placeholder="Email"
@@ -80,21 +103,16 @@ export default function RegisterScreen() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <div>
+
         <input
           className="text"
           type="password"
           placeholder="Password"
           value={password}
-          onChange={(e) => {
-           const value = e.target.value
-            setPassword(value)
-            setPasswordError(isValidPassword(value) ? '' : 'Password must be at least 6 characters and include uppercase, lowercase, and a number.')
-          }}
+          onChange={(e) => setPassword(e.target.value)}
           required
         />
-        </div>
-        <div>
+
         <label className="check-box">
           <input
             type="checkbox"
@@ -121,14 +139,14 @@ export default function RegisterScreen() {
             </button>
           </span>
         </label>
-        </div>
+
         <SubmitButton
         label="Register"
         disabled={!accepted} />
       </form>
 
-      <TermsModal onClose={() => setShowTerms(false)} isOpen={showTerms} />
-      <PrivacyModal onClose={() => setShowPrivacy(false)} isOpen={showPrivacy} />
+      {showTerms && <TermsModal onClose={() => setShowTerms(false)} isOpen={false} />}
+      {showPrivacy && <PrivacyModal onClose={() => setShowPrivacy(false)} isOpen={false} />}
     </div>
   )
 }

@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../../services/firebaseConfig'
+import { db } from '../../services/firebaseConfig'
+import { doc, updateDoc, serverTimestamp } from 'firebase/firestore'
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
@@ -12,8 +14,21 @@ export default function LoginScreen() {
   const handleLogin = async (e: React.FormEvent) => {
   e.preventDefault()
   try {
-    await signInWithEmailAndPassword(auth, email, password)
-    navigate('/landing') // or your target route
+    const cred = await signInWithEmailAndPassword(auth, email.trim(), password)
+    const user = cred.user
+    await user.reload()
+
+    if (!user.emailVerified) {
+      alert('Please verify your email before logging in.')
+      await auth.signOut()
+      return
+    }
+    await updateDoc(doc(db, 'users', user.uid), {
+      emailVerified: true,
+      updatedAt: serverTimestamp()
+    })
+
+    navigate('/landing')
   } catch (err: any) {
     console.error('Login error:', err)
     alert(`Login failed: ${err.message}`)
