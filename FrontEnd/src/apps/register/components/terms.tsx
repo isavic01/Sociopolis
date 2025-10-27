@@ -118,7 +118,7 @@ export const TermsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
             </li>
 
         </ol>
-        <button onClick={onClose} className="button text">
+        <button onClick={onClose} className="shadow-sm !bg-[#F7F7F7] !text-[#838080] !border p !border-[#D9D9D9] !px-4 !py-2 !mx-2 !rounded-lg focus:outline-none">
           Close
         </button>
       </div>
@@ -130,7 +130,7 @@ export const PrivacyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
   if (!isOpen) return null
 
   return (
-    <div className="terms-overlay">
+    <div className="terms-overlay ">
       <div className="terms-box">
         <h1 className="h1">Privacy Policy</h1>
         <p className="text">Last Updated: September 25, 2025</p>
@@ -230,7 +230,7 @@ export const PrivacyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           </li>
         </ol>
 
-        <button onClick={onClose} className="button text">
+        <button onClick={onClose} className="shadow-sm !bg-[#F7F7F7] !text-[#838080] !border p !border-[#D9D9D9] !px-4 !py-2 !mx-2 !rounded-lg focus:outline-none">
           Close
         </button>
       </div>

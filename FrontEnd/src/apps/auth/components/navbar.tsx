@@ -4,15 +4,17 @@ export const Navbar = () => {
   const navigate = useNavigate();
 
   return (
-    <nav className="login-nav">
+    <nav className="w-full z-50 flex justify-between h-24">
       <img
-        src="/assets/back-icon.png" //change ig when you have the picture
+        src="/src/assets/svg/Backarrow.svg" //replace with back button img
         alt="Back"
-        className="back-icon"
-        onClick={() => navigate(-1)}
+        className="!mx-6 !my-8 w-8 h-8"
+        onClick={() => navigate(-1)} // navigates to previous page
       />
 
-      <button onClick={() => navigate('/register')} className="button">
+      <button
+      onClick={() => navigate('/register')}
+      className="!bg-[#F7F7F7] !border-2 !text-[#75BBFF] !border-[#D9D9D9] !px-4 !mx-4 !my-5 !rounded-2xl">
         Sign up
       </button>
     </nav>
