@@ -77,7 +77,7 @@ export default function RegisterScreen() {
 
       <form onSubmit={handleRegister} className="flex flex-col justify-center items-center !gap-y-2">
         <input
-          className="shadow-sm !bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
+          className="!bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
           placeholder="Display-Name (Public)"
           type="text"
           value={name}
@@ -86,7 +86,7 @@ export default function RegisterScreen() {
         />
 
         <input
-          className="shadow-sm !bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
+          className="!bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
           type="number"
           placeholder="Age"
           value={age}
@@ -95,7 +95,7 @@ export default function RegisterScreen() {
         />
 
         <input
-          className="shadow-sm !bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
+          className="!bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
           placeholder="Email"
           type="email"
           value={email}
@@ -104,7 +104,7 @@ export default function RegisterScreen() {
         />
 
         <input
-          className="shadow-sm !bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
+          className="!bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
           type="password"
           placeholder="Password"
           value={password}
@@ -123,7 +123,7 @@ export default function RegisterScreen() {
             I accept the{' '}
             <button
               type="button"
-              className="shadow-sm !bg-[#F7F7F7] !text-[#838080] !border p !border-[#D9D9D9] !px-4 !py-2 !mx-2 !rounded-lg focus:outline-none"
+              className="!bg-[#F7F7F7] !text-[#838080] !border p !border-[#D9D9D9] !px-4 !py-2 !mx-2 !rounded-lg focus:outline-none"
               onClick={() => setShowTerms(true)}
             >
               Terms & Conditions
@@ -131,7 +131,7 @@ export default function RegisterScreen() {
             and{' '}
             <button
               type="button"
-              className="shadow-sm !bg-[#F7F7F7] !text-[#838080] !border p !border-[#D9D9D9] !px-4 !py-2 !mx-2 !rounded-lg focus:outline-none"
+              className="!bg-[#F7F7F7] !text-[#838080] !border p !border-[#D9D9D9] !px-4 !py-2 !mx-2 !rounded-lg focus:outline-none"
               onClick={() => setShowPrivacy(true)}
             >
               Privacy Policy

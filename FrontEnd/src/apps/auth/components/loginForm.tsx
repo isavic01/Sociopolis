@@ -44,7 +44,7 @@ export default function LoginScreen() {
 
       <form onSubmit={handleLogin} className="flex flex-col justify-center items-center !gap-y-2">
         <input
-          className="shadow-sm !bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
+          className="!bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
           type="email"
           placeholder="Email"
           value={email}
@@ -53,7 +53,7 @@ export default function LoginScreen() {
         />
 
         <input
-          className="shadow-sm !bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
+          className="!bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
           type="password"
           placeholder="Password"
           value={password}
@@ -63,7 +63,7 @@ export default function LoginScreen() {
 
         {error && <p className="error-message">{error}</p>}
 
-        <button type="submit" className="shadow-sm !bg-[#75BBFF] !border !text-[#FFFFFF] border-[#000000] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none">
+        <button type="submit" className="!bg-[#75BBFF] !border !text-[#FFFFFF] border-[#000000] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none">
           Login
         </button>
       </form>
