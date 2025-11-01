@@ -18,7 +18,7 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`button ${disabled ? 'bg-gray-400 cursor-not-allowed' : ''}`}
+      className="shadow-sm !bg-[#75BBFF] !border !text-[#FFFFFF] border-[#000000] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
     >
       {label}
     </button>

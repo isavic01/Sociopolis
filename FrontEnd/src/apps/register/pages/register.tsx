@@ -5,7 +5,7 @@ import '../layout/terms-modal.css'
 
 export default function RegisterPage() {
   return (
-    <div className="container">
+    <div className="bg-[#FFFFFF]">
         <Navbar />
       <RegisterScreen />
     </div>
