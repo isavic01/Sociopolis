@@ -4,6 +4,8 @@ import RegisterPage from "./apps/register/pages/register"
 import LoginPage from "./apps/auth/pages/login"
 import LandingPage from "./apps/landing/pages/landing"
 import ProtectedRoute from "./apps/auth/components/ProtectedRoute"
+import PublicRoute from "./apps/auth/components/PublicRoute"
+
 
 function GameLanding() {
   return (
@@ -22,9 +24,19 @@ export default function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Welcome />} />
-        <Route path="/auth" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-
+        <Route path="/auth" element=
+        {
+          <PublicRoute>
+            <LoginPage />
+          </PublicRoute>
+        } />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <RegisterPage />
+            </PublicRoute>
+          } />
         {/* Protected routes */}
         <Route
           path="/landing"

@@ -5,7 +5,7 @@ import App from './App.jsx'
 import React from "react";
 import ReactDOM from "react-dom/client";
 import AppRouter from "./Router";
-import { AuthProvider } from "./apps/auth/components/AuthProvider"
+import { AuthProvider } from "./apps/auth/components/authProvider"
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
