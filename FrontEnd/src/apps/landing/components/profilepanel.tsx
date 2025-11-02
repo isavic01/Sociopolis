@@ -66,42 +66,37 @@ export const ProfilePanel = () => {
   }
 
   return (
-    <div className="p-6 bg-blue-200 h-full overflow-y-auto">
-      <h3 className="text-2xl font-bold text-center mb-2">Profile</h3>
-      <p className="text-center text-sm text-gray-700 mb-6">
+    <div className="p-4 h-full overflow-y-auto">
+      <h3 className="text-2xl font-bold mb-2">profile</h3>
+      <p className="text-sm text-gray-700 mb-6">
         See your progress and badges
       </p>
 
       {/* Avatar + username */}
-      <div className="flex flex-col items-center bg-white rounded-lg shadow p-6 mb-6">
+      <div className="flex flex-row items-start p-6">
         <div className="relative">
           <img
-            src={profile.avatarUrl || "/src/assets/default-avatar.png"}
+            src={profile.avatarUrl || "/src/assets/soci.png"}
             alt="Profile avatar"
             className="w-24 h-24 rounded-full object-cover"
           />
-          <button className="absolute bottom-0 right-0 bg-blue-500 text-white p-1 rounded-full">
-            <img
-              src="/src/assets/camera.png"
-              alt="Change avatar"
-              className="w-4 h-4"
-            />
-          </button>
         </div>
-        <h4 className="mt-4 text-lg font-semibold">@{profile.displayName}</h4>
-        <span className="font-mono text-blue-700">{profile.xp} XP</span>
+        <div className="flex-col !items-end">
+          <h4 className="p-4 !text-base text-[#FFFFFF]">@{profile.displayName}</h4>
+          <span className="p-4 !text-base text-[#FFFFFF]">{profile.xp} XP</span>
+        </div>
       </div>
 
       {/* Current lesson */}
-      <div className="bg-white rounded-lg shadow p-4 mb-6">
-        <h5 className="font-semibold mb-2">Current Lesson</h5>
-        <p className="text-gray-700">{profile.currentLesson}</p>
+      <div className="rounded-lg p-2">
+        <h5 className="!text-lg mb-2 text-[#FFFFFF]">Current Lesson</h5>
+        <p className="!text-sm text-[#FFFFFF]">{profile.currentLesson}</p>
       </div>
 
       {/* Streaks */}
-      <div className="bg-white rounded-lg shadow p-4 mb-6">
+      <div className="p-2 mb-6">
         <h5 className="font-semibold mb-2">Streaks</h5>
-        <div className="h-24 flex items-center justify-center text-gray-400">
+        <div className="h-[25vh] bg-white rounded-lg flex items-center justify-center">
           {/*{profile.streaks > 0
             ? `${profile.streaks} day streak 🔥`
             : "No streak yet"}*/}
