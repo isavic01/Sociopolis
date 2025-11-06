@@ -29,9 +29,6 @@ export default function WelcomePage() {
         <button className="block w-[36vw] py-2 px-4 rounded text-white shadow-sm" style={{ backgroundColor: "#283D52" }} onClick={() => navigate("/auth")}>
           I ALREADY HAVE AN ACCOUNT
         </button>
-        <button className="block w-[36vw] py-2 px-4 rounded text-white shadow-md" style={{ backgroundColor: "black" }} onClick={() => navigate("/landing")}>
-          Test Landing
-        </button>
       </div>
     </div>
 
