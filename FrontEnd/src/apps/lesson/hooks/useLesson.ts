@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '../../auth/components/authProvider';
-import { LessonFirebaseService } from '../services/lessonService';
+import { LessonService } from '../services/lessonService';
 import type { LessonContent, LessonProgress } from '../lesson';
 
 export function useLesson(lessonId: string) {
@@ -19,7 +19,7 @@ export function useLesson(lessonId: string) {
 
       try {
         // Fetch lesson content
-        const lessonData = await LessonFirebaseService.getLessonById(lessonId);
+        const lessonData = await LessonService.getLessonById(lessonId);
         if (!lessonData) {
           setError('Lesson not found');
           return;
@@ -28,7 +28,7 @@ export function useLesson(lessonId: string) {
 
         // Fetch user progress if user is authenticated
         if (user) {
-          const progressData = await LessonFirebaseService.getUserProgress(user.uid, lessonId);
+          const progressData = await LessonService.getUserProgress(user.uid, lessonId);
           setProgress(progressData);
         }
       } catch (err) {
@@ -46,7 +46,7 @@ export function useLesson(lessonId: string) {
     if (!user || !lessonId) return;
 
     try {
-      await LessonFirebaseService.updateProgress(user.uid, lessonId, progressData);
+      await LessonService.updateProgress(user.uid, lessonId, progressData);
       
       // Update local state
       setProgress(prev => ({

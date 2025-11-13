@@ -49,8 +49,9 @@ export default function AppRouter() {
         <Route
           path="/lesson/:id"
           element={
-           
+            <ProtectedRoute>
               <Lesson />
+            </ProtectedRoute>
    
           }
         />
