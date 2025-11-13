@@ -52,7 +52,7 @@ export default function LessonPage() {
   };
 
   const handleGoBack = () => {
-    navigate(-1);
+    navigate('/landing');
   };
 
   if (loading) {
