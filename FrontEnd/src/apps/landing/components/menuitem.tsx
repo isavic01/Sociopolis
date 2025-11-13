@@ -15,8 +15,8 @@ export const MenuItem = ({
     <img
       src={iconSrc}
       alt={`${label} icon`}
-      className="w-5 h-5 object-contain"
+      className="w-8 h-8 mb-2 object-contain"
     />
-    <span>{label}</span>
+    <span className="h4 !text-md">{label}</span>
   </button>
 )

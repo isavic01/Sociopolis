@@ -34,7 +34,7 @@ export const SideMenu = ({ isOpen }: { isOpen: boolean }) => {
         />
         <MenuItem
           label="Leaderboard"
-          iconSrc="/src/assets/svg/trophy.svg"
+          iconSrc="/src/assets/svg/leaderboard.svg"
           onClick={() => togglePanel("leaderboard")}
         />
       </div>

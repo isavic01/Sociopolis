@@ -36,7 +36,7 @@ export default function WelcomePage() {
     <div
       className="absolute bottom-0 left-0 w-full h-[400px] bg-repeat-x bg-bottom z-0 opacity-30"
       style={{
-        backgroundImage: "url('/src/assets/svg/city_skyline.svg')",
+        backgroundImage: "url('/src/assets/city_skyline.png')",
         backgroundSize: 'auto 100%',
         backgroundPosition: 'center bottom'
       }}
