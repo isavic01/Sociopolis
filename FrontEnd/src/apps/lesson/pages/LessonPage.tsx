@@ -29,6 +29,18 @@ const PLACEHOLDER_LESSONS: Record<string, any> = {
         content: '**Practice Exercise:**\nNext time you have a conversation, try to focus entirely on what the other person is saying. Don\'t think about your response while they\'re talking.\n\n**Remember:** Good communication is a skill that improves with practice!',
       },
     ],
+    checkIns: [
+      { id: 'comm-q1', section: 0, prompt: 'What is a key part of active listening?', options: ['Interrupt to clarify', 'Maintain eye contact and focus', 'Think about your reply immediately', 'Speak louder'], correctIndex: 1, xpReward: 10 },
+      { id: 'comm-q2', section: 1, prompt: 'Which element relates to gestures and posture?', options: ['Tone of voice', 'Body language', 'Active listening', 'Clear expression'], correctIndex: 1, xpReward: 10 },
+      { id: 'comm-q3', section: 1, prompt: 'Tone of voice mainly affects:', options: ['What is said', 'How meaning is perceived', 'Grammar rules', 'Vocabulary size'], correctIndex: 1, xpReward: 10 },
+      { id: 'comm-q4', section: 2, prompt: 'Paraphrasing shows:', options: ['Disagreement', 'Understanding', 'Disinterest', 'Confusion'], correctIndex: 1, xpReward: 12 },
+      { id: 'comm-q5', section: 2, prompt: 'Interrupting usually:', options: ['Builds trust', 'Speeds empathy', 'Breaks listening flow', 'Improves clarity'], correctIndex: 2, xpReward: 12 },
+      { id: 'comm-q6', section: 0, prompt: 'Communication is the exchange of:', options: ['Only words', 'Information, ideas, and feelings', 'Just emotions', 'Body movement only'], correctIndex: 1, xpReward: 8 },
+      { id: 'comm-q7', section: 3, prompt: 'Suggested exercise focuses on:', options: ['Thinking of replies early', 'Filling silence fast', 'Fully focusing on the speaker', 'Correcting the speaker'], correctIndex: 2, xpReward: 12 },
+      { id: 'comm-q8', section: 1, prompt: 'Clear expression means:', options: ['Using jargon', 'Speaking vaguely', 'Saying what you mean simply', 'Talking rapidly'], correctIndex: 2, xpReward: 10 },
+      { id: 'comm-q9', section: 0, prompt: 'Listening vs hearing: listening is:', options: ['Passive', 'Intentional and focused', 'Uncontrolled', 'Impossible to improve'], correctIndex: 1, xpReward: 10 },
+      { id: 'comm-q10', section: 2, prompt: 'A good follow-up listening action:', options: ['Ignore emotions', 'Ask clarifying questions', 'Talk over them', 'Look away'], correctIndex: 1, xpReward: 12 },
+    ],
   },
   'emotional-intelligence': {
     id: 'emotional-intelligence',
@@ -54,6 +66,18 @@ const PLACEHOLDER_LESSONS: Record<string, any> = {
         title: 'Daily Practice',
         content: 'Keep an emotion journal. Each day, write down:\n- What emotions you felt\n- What triggered them\n- How you responded\n- What you learned\n\n**Remember:** Emotional intelligence can be developed at any age!',
       },
+    ],
+    checkIns: [
+      { id: 'ei-q1', section: 0, prompt: 'Emotional Intelligence involves managing:', options: ['Only other people’s emotions', 'Both your own and others’ emotions', 'Only stress', 'Only anger'], correctIndex: 1, xpReward: 10 },
+      { id: 'ei-q2', section: 1, prompt: 'Recognizing your triggers is part of:', options: ['Empathy', 'Self-Awareness', 'Motivation', 'Social Skills'], correctIndex: 1, xpReward: 10 },
+      { id: 'ei-q3', section: 1, prompt: 'Waiting before reacting demonstrates:', options: ['Self-Regulation', 'Motivation', 'Empathy', 'Stress'], correctIndex: 0, xpReward: 12 },
+      { id: 'ei-q4', section: 1, prompt: 'Putting yourself in someone’s shoes is:', options: ['Motivation', 'Empathy', 'Self-Awareness', 'Self-Regulation'], correctIndex: 1, xpReward: 10 },
+      { id: 'ei-q5', section: 1, prompt: 'Driving toward goals for internal reasons reflects:', options: ['Motivation', 'Empathy', 'Social Skills', 'Stress'], correctIndex: 0, xpReward: 10 },
+      { id: 'ei-q6', section: 2, prompt: 'A benefit of EI is:', options: ['More isolation', 'Worse leadership', 'Better relationships', 'Higher confusion'], correctIndex: 2, xpReward: 10 },
+      { id: 'ei-q7', section: 3, prompt: 'Emotion journaling helps build:', options: ['Avoidance', 'Self-Awareness', 'Conflict', 'Denial'], correctIndex: 1, xpReward: 12 },
+      { id: 'ei-q8', section: 0, prompt: 'EI can be developed:', options: ['Only in childhood', 'At any age', 'Only by leaders', 'Not at all'], correctIndex: 1, xpReward: 8 },
+      { id: 'ei-q9', section: 1, prompt: 'Social Skills contribute to:', options: ['Isolation', 'Relationship building', 'Less trust', 'Avoidance'], correctIndex: 1, xpReward: 10 },
+      { id: 'ei-q10', section: 2, prompt: 'Reduced stress comes from improving:', options: ['Conflict only', 'Emotional Intelligence', 'Vocabulary', 'Posture'], correctIndex: 1, xpReward: 12 },
     ],
   },
   'building-relationships': {
@@ -81,6 +105,18 @@ const PLACEHOLDER_LESSONS: Record<string, any> = {
         content: '- Reach out to someone you haven\'t talked to in a while\n- Practice active listening in your next conversation\n- Identify your love language\n\n**Remember:** Building relationships takes time and effort, but the rewards are immeasurable!',
       },
     ],
+    checkIns: [
+      { id: 'rel-q1', section: 0, prompt: 'Foundation of strong relationships:', options: ['Trust', 'Distance', 'Silence', 'Competition'], correctIndex: 0, xpReward: 10 },
+      { id: 'rel-q2', section: 1, prompt: 'Keeping promises builds:', options: ['Confusion', 'Trust', 'Distance', 'Silence'], correctIndex: 1, xpReward: 10 },
+      { id: 'rel-q3', section: 1, prompt: 'Open dialogue represents:', options: ['Competition', 'Communication', 'Withdrawal', 'Isolation'], correctIndex: 1, xpReward: 10 },
+      { id: 'rel-q4', section: 2, prompt: 'Love language that values undivided attention:', options: ['Quality Time', 'Gifts', 'Acts of Service', 'Physical Touch'], correctIndex: 0, xpReward: 12 },
+      { id: 'rel-q5', section: 2, prompt: 'Saying encouraging words uses:', options: ['Words of Affirmation', 'Acts of Service', 'Gifts', 'Silence'], correctIndex: 0, xpReward: 10 },
+      { id: 'rel-q6', section: 3, prompt: 'Suggested action: reach out to:', options: ['Someone you argue with', 'Someone you haven’t talked to', 'No one', 'Only yourself'], correctIndex: 1, xpReward: 10 },
+      { id: 'rel-q7', section: 1, prompt: 'Respecting boundaries shows:', options: ['Control', 'Mutual Respect', 'Competition', 'Distance'], correctIndex: 1, xpReward: 12 },
+      { id: 'rel-q8', section: 0, prompt: 'Meaningful time together is called:', options: ['Silence', 'Quality Time', 'Withdrawal', 'Delay'], correctIndex: 1, xpReward: 8 },
+      { id: 'rel-q9', section: 2, prompt: 'Acts of Service example:', options: ['Ignoring chores', 'Helping with a task', 'Silent treatment', 'Walking away'], correctIndex: 1, xpReward: 10 },
+      { id: 'rel-q10', section: 3, prompt: 'Active listening involves:', options: ['Thinking ahead only', 'Fully focusing', 'Avoiding eye contact', 'Immediate correction'], correctIndex: 1, xpReward: 12 },
+    ],
   },
   'conflict-resolution': {
     id: 'conflict-resolution',
@@ -107,6 +143,18 @@ const PLACEHOLDER_LESSONS: Record<string, any> = {
         content: '**The "XYZ" Statement:**\n"When you do X in situation Y, I feel Z."\n\n**The Pause Technique:**\nTake a 10-minute break if emotions run high.\n\n**Remember:** The goal isn\'t to win—it\'s to preserve the relationship!',
       },
     ],
+    checkIns: [
+      { id: 'conf-q1', section: 0, prompt: 'Conflict can lead to:', options: ['Growth if handled well', 'Only resentment', 'No learning', 'Instant harmony'], correctIndex: 0, xpReward: 10 },
+      { id: 'conf-q2', section: 1, prompt: 'Style aiming for win-win:', options: ['Competing', 'Avoiding', 'Collaborating', 'Accommodating'], correctIndex: 2, xpReward: 12 },
+      { id: 'conf-q3', section: 1, prompt: 'Avoiding style is:', options: ['Assertive & cooperative', 'Neither assertive nor cooperative', 'Unassertive but cooperative', 'Only cooperative'], correctIndex: 1, xpReward: 10 },
+      { id: 'conf-q4', section: 2, prompt: 'First step in resolving conflict:', options: ['Brainstorm', 'Stay Calm', 'Follow Up', 'Compromise'], correctIndex: 1, xpReward: 10 },
+      { id: 'conf-q5', section: 2, prompt: 'Focus on the ______ not the person.', options: ['Emotion', 'Issue', 'History', 'Silence'], correctIndex: 1, xpReward: 12 },
+      { id: 'conf-q6', section: 2, prompt: 'Generating multiple solutions before choosing:', options: ['Brainstorming', 'Competing', 'Avoiding', 'Judging'], correctIndex: 0, xpReward: 10 },
+      { id: 'conf-q7', section: 3, prompt: '“XYZ” statement helps express:', options: ['Blame', 'Clarity & feeling', 'Avoidance', 'Winning'], correctIndex: 1, xpReward: 12 },
+      { id: 'conf-q8', section: 3, prompt: 'Taking a break if emotions spike is:', options: ['Avoidance forever', 'Pause Technique', 'Compromise', 'Competition'], correctIndex: 1, xpReward: 10 },
+      { id: 'conf-q9', section: 1, prompt: 'Compromising means:', options: ['Both give a little', 'One wins completely', 'No resolution', 'Avoiding forever'], correctIndex: 0, xpReward: 10 },
+      { id: 'conf-q10', section: 2, prompt: 'Following up ensures:', options: ['Uncertainty', 'Solution is working', 'More conflict', 'Avoidance'], correctIndex: 1, xpReward: 12 },
+    ],
   },
 };
 
@@ -115,6 +163,9 @@ export default function LessonPage() {
   const navigate = useNavigate();
   const [currentSection, setCurrentSection] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [xp, setXp] = useState(0);
+  const [answered, setAnswered] = useState<Record<string, { correct: boolean }>>({});
+  const [selectedOption, setSelectedOption] = useState<Record<string, number>>({});
 
   // Get lesson data (placeholder for now)
   const lesson = id ? PLACEHOLDER_LESSONS[id] : null;
@@ -172,6 +223,18 @@ export default function LessonPage() {
     navigate('/landing');
   };
 
+  const currentCheckIn = lesson?.checkIns?.find((q: any) => q.section === currentSection);
+
+  const handleAnswer = (questionId: string, optionIndex: number) => {
+    if (!currentCheckIn || answered[questionId]) return;
+    setSelectedOption(prev => ({ ...prev, [questionId]: optionIndex }));
+    const isCorrect = optionIndex === currentCheckIn.correctIndex;
+    setAnswered(prev => ({ ...prev, [questionId]: { correct: isCorrect } }));
+    if (isCorrect) {
+      setXp(prev => prev + currentCheckIn.xpReward);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       {/* Navigation Bar */}
@@ -188,8 +251,16 @@ export default function LessonPage() {
               Back to Lessons
             </button>
             
-            <div className="text-sm text-gray-500 hidden sm:block">
-              Section {currentSection + 1} of {totalSections}
+            <div className="flex items-center gap-6">
+              <div className="hidden sm:block text-sm text-gray-500">
+                Section {currentSection + 1} of {totalSections}
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-sm font-medium shadow">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6l3 6H9l3 6" />
+                </svg>
+                XP: {xp}
+              </div>
             </div>
           </div>
         </div>
@@ -289,6 +360,59 @@ export default function LessonPage() {
               </div>
             </div>
 
+            {/* Check-In Question */}
+            {currentCheckIn && (
+              <div className="mt-8 p-6 rounded-xl border border-indigo-200 bg-indigo-50/60">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-lg font-semibold text-indigo-700">Check-In Question</h3>
+                  <span className="text-xs px-2 py-1 rounded-full bg-indigo-600 text-white">+{currentCheckIn.xpReward} XP</span>
+                </div>
+                <p className="text-gray-800 mb-4 font-medium">{currentCheckIn.prompt}</p>
+                <div className="space-y-2">
+                  {currentCheckIn.options.map((opt: string, idx: number) => {
+                    const answeredState = answered[currentCheckIn.id];
+                    const selected = selectedOption[currentCheckIn.id] === idx;
+                    const correct = answeredState?.correct && selected;
+                    const incorrect = answeredState && !answeredState.correct && selected;
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => handleAnswer(currentCheckIn.id, idx)}
+                        disabled={!!answeredState}
+                        className={`w-full text-left px-4 py-3 rounded-lg border transition-colors text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-400
+                          ${!answeredState ? 'bg-white hover:bg-indigo-50 border-indigo-200' : ''}
+                          ${correct ? 'bg-green-100 border-green-400 text-green-800' : ''}
+                          ${incorrect ? 'bg-red-100 border-red-400 text-red-800' : ''}
+                          ${!selected && answeredState ? 'bg-white border-gray-200 text-gray-400' : ''}`}
+                      >
+                        {opt}
+                      </button>
+                    );
+                  })}
+                </div>
+                {answered[currentCheckIn.id] && (
+                  <div className="mt-4 flex items-center justify-between">
+                    {answered[currentCheckIn.id].correct ? (
+                      <div className="flex items-center text-green-600 text-sm font-semibold">
+                        <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+                        </svg>
+                        Correct! +{currentCheckIn.xpReward} XP earned.
+                      </div>
+                    ) : (
+                      <div className="flex items-center text-red-600 text-sm font-semibold">
+                        <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01" />
+                        </svg>
+                        Not quite. No XP this time.
+                      </div>
+                    )}
+                    <span className="text-xs text-gray-500">(Placeholder – save to backend later)</span>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Navigation Buttons */}
             <div className="flex justify-between items-center pt-6 border-t">
               <button
@@ -344,6 +468,7 @@ export default function LessonPage() {
             <p className="text-lg text-gray-600 mb-8">
               You've completed the "{lesson.title}" lesson!
             </p>
+            <p className="text-sm text-indigo-600 mt-2">Total XP earned in this lesson: {xp}</p>
             
             <div className="flex gap-4 justify-center">
               <button

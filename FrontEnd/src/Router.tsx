@@ -5,6 +5,7 @@ import LoginPage from "./apps/auth/pages/login"
 import LandingPage from "./apps/landing/pages/landing"
 import ProtectedRoute from "./apps/auth/components/ProtectedRoute"
 import PublicRoute from "./apps/auth/components/PublicRoute"
+import LessonPage from "./apps/lesson/pages/LessonPage"
 
 
 function GameLanding() {
@@ -15,7 +16,7 @@ function GameLanding() {
     </div>
   )
 }
-function Lesson() { return <h1>Lesson</h1> }
+function Lesson() { return <h1><LessonPage/></h1> }
 function Leaderboard() { return <h1>Leaderboard</h1> }
 function Welcome() { return <WelcomePage /> }
 
