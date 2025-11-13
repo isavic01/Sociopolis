@@ -52,6 +52,7 @@ export default function AppRouter() {
             <ProtectedRoute>
               <Lesson />
             </ProtectedRoute>
+   
           }
         />
         <Route
