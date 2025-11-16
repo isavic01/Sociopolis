@@ -72,25 +72,24 @@ export const ProfilePanel = () => {
       <h3 className="text-2xl font-bold mb-2">profile</h3>
       <p className="text-sm text-gray-700 mb-6">See your progress and badges</p>
 
-      {/* Avatar + username */}
       <div className="flex flex-row items-start p-6">
         <div className="relative">
           <img
             src={profile.avatarUrl || "/src/assets/soci.png"}
             alt="Profile avatar"
-            className="w-24 h-24 rounded-full object-cover"
+            className="w-28 h-28"
           />
         </div>
         <div className="flex-col !items-end">
-          <h4 className="p-4 !text-base text-[#FFFFFF]">@{profile.displayName}</h4>
-          <span className="p-4 !text-base text-[#FFFFFF]">{profile.xp} XP</span>
+          <h4 className="p-4 !text-base">{profile.displayName}</h4>
+          <span className="p-4 !text-base text-gray-700">{profile.xp} XP</span>
         </div>
       </div>
 
       {/* Current lesson */}
       <div className="rounded-lg p-2">
         <h5 className="!text-lg font-bold mb-2">Current Lesson</h5>
-        <p className="!text-sm text-[#FFFFFF]">{profile.currentLesson}</p>
+        <p className="!text-sm text-gray-700">{profile.currentLesson}</p>
       </div>
 
       {/* Streaks */}

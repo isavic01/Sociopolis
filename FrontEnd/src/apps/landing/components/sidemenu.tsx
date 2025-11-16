@@ -3,7 +3,8 @@ import { MenuItem } from "./menuitem"
 import { ProfilePanel } from "./profilepanel"
 import SettingsPanel from "./settingspanel"
 import { LeaderboardPanel } from "./leaderboardpanel"
-
+import { AboutPanel } from "./aboutpanel"
+import { CharacterPanel } from "./characterpanel"
 export const SideMenu = ({ isOpen }: { isOpen: boolean }) => {
   const [activePanel, setActivePanel] = useState<string | null>(null)
 
@@ -37,6 +38,16 @@ export const SideMenu = ({ isOpen }: { isOpen: boolean }) => {
           iconSrc="/src/assets/svg/leaderboard.svg"
           onClick={() => togglePanel("leaderboard")}
         />
+        <MenuItem
+          label="Character"
+          iconSrc="/src/assets/svg/customize.svg"
+          onClick={() => togglePanel("character")}
+        />
+        <MenuItem
+          label="About"
+          iconSrc="/src/assets/svg/about.svg"
+          onClick={() => togglePanel("about")}
+        />
       </div>
 
       {/* Panel column */}
@@ -45,6 +56,8 @@ export const SideMenu = ({ isOpen }: { isOpen: boolean }) => {
           {activePanel === "profile" && <ProfilePanel />}
           {activePanel === "settings" && <SettingsPanel />}
           {activePanel === "leaderboard" && <LeaderboardPanel />}
+          {activePanel === "character" && <CharacterPanel />}
+          {activePanel === "about" && <AboutPanel />}
         </div>
       )}
     </div>
