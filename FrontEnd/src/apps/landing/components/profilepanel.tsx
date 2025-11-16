@@ -90,7 +90,7 @@ export const ProfilePanel = () => {
       {/* Current lesson */}
       <div className="rounded-lg p-2">
         <h5 className="!text-lg font-bold mb-2">Current Lesson</h5>
-        <p className="!text-sm text-[#FFFFFF]">{profile.currentLesson}</p>
+        <p className="!text-sm text-gray-700">{profile.currentLesson}</p>
       </div>
 
       {/* Streaks */}

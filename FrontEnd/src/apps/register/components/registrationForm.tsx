@@ -55,6 +55,7 @@ export default function RegisterScreen() {
         updatedAt: serverTimestamp(),
         xp: 0,
         level: 0,
+        avatarUrl: '/src/assets/svg/avatars/soci_lightblue.svg',
         admin: false,
         email: trimmedEmail,
         emailVerified: false
