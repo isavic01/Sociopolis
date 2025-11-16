@@ -4,6 +4,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../../services/firebaseConfig'
 import { db } from '../../services/firebaseConfig'
 import { doc, updateDoc, serverTimestamp } from 'firebase/firestore'
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
@@ -34,6 +35,21 @@ export default function LoginScreen() {
     alert(`Login failed: ${err.message}`)
   }
 }
+  const handlePasswordReset = async () => {
+    if (!email.trim()) {
+      alert('Please enter your email to reset your password.');
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email.trim());
+      alert('Password reset email sent! Please check your inbox.');
+    } catch (error: any) {
+      console.error('Password reset error:', error);
+      alert(`Error: ${error.message}`);
+    }
+  };
+
 
 
   return (
@@ -66,6 +82,14 @@ export default function LoginScreen() {
         <button type="submit" className="!bg-[#75BBFF] !border !text-[#FFFFFF] border-[#000000] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none">
           Login
         </button>
+        <button
+          type="button"
+          onClick={() => handlePasswordReset()}
+          className="text-sm !bg-transparent underline mt-2 !border-none"
+        >
+          Forgot Password?
+        </button>
+
       </form>
       <br></br>
       <br></br>
