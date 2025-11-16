@@ -6,6 +6,7 @@ type User = {
   id: string;
   displayName: string;
   xp: number;
+  avatarUrl?: string | null;
 };
 
 export const LeaderboardPanel = () => {
@@ -13,31 +14,34 @@ export const LeaderboardPanel = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLeaderboard = async () => {
-      const leaderboardDoc = await getDoc(doc(db, "leaderboard", "top10"));
-      const topUserIds: string[] = leaderboardDoc.exists()
-        ? leaderboardDoc.data().topUserIds ?? []
-        : [];
+  const fetchLeaderboard = async () => {
+    const leaderboardDoc = await getDoc(doc(db, "leaderboard", "top10"));
+    const topUserIds: string[] = leaderboardDoc.exists()
+      ? leaderboardDoc.data().topUserIds ?? []
+      : [];
 
-      const userPromises = topUserIds.map(async (userId) => {
-        const userDoc = await getDoc(doc(db, "users", userId));
-        const data = userDoc.exists()
-          ? (userDoc.data() as Omit<User, "id">)
-          : { displayName: "Unknown", xp: 0 };
-        return {
-          id: userId,
-          displayName: data.displayName ?? "Anonymous",
-          xp: data.xp ?? 0,
-        };
-      });
+    const userPromises = topUserIds.map(async (userId) => {
+      const userDoc = await getDoc(doc(db, "users", userId));
+      const data = userDoc.exists()
+        ? userDoc.data()
+        : { displayName: "Unknown", xp: 0, avatarUrl: null };
 
-      const users = await Promise.all(userPromises);
-      setTopUsers(users);
-      setLoading(false);
-    };
+      return {
+        id: userId,
+        displayName: data.displayName ?? "Anonymous",
+        xp: data.xp ?? 0,
+        avatarUrl: data.avatarUrl ?? null,
+      };
+    });
 
-    fetchLeaderboard();
-  }, []);
+    const users = await Promise.all(userPromises);
+    setTopUsers(users);
+    setLoading(false);
+  };
+
+  fetchLeaderboard();
+}, []);
+
 
   if (loading) {
     return <p className="p-2 text-center">Loading leaderboard…</p>;
@@ -51,34 +55,37 @@ export const LeaderboardPanel = () => {
       </p>
 
       <ul className="space-y-3">
-        {topUsers.map((user, index) => {
-          let trophySrc = "";
-          if (index === 0) trophySrc = "/src/assets/svg/trophy-gold.svg";
-          if (index === 1) trophySrc = "/src/assets/svg/trophy-silver.svg";
-          if (index === 2) trophySrc = "/src/assets/svg/trophy-bronze.svg";
+  {topUsers.map((user, index) => {
+    let trophySrc = "";
+    if (index === 0) trophySrc = "/src/assets/svg/gold_trophy.svg";
+    if (index === 1) trophySrc = "/src/assets/svg/silver_trophy.svg";
+    if (index === 2) trophySrc = "/src/assets/svg/bronze_trophy.svg";
 
-          return (
-            <li
-              key={user.id}
-              className="flex items-center justify-between bg-white rounded-lg shadow p-2"
-            >
-              <div className="flex items-center gap-3">
-                {trophySrc ? (
-                  <img
-                    src={trophySrc}
-                    alt="Trophy"
-                    className="w-6 h-6 shrink-0"
-                  />
-                ) : (
-                  <span className="w-6 text-center p">{index + 1}</span>
-                )}
-                <span>{user.displayName}</span>
-              </div>
-              <span className="text-sm">{user.xp} XP</span>
-            </li>
-          );
-        })}
-      </ul>
+    return (
+      <li
+        key={user.id}
+        className="flex items-center justify-between bg-white rounded-lg shadow p-2"
+      >
+        <div className="flex items-center gap-3">
+          {trophySrc ? (
+            <img src={trophySrc} alt="Trophy" className="w-6 h-6 shrink-0" />
+          ) : (
+            <span className="w-6 text-center">{index + 1}</span>
+          )}
+          {user.avatarUrl && (
+            <img
+              src={user.avatarUrl || "/src/assets/svg/avatars/soci_lightblue.svg" }
+              alt={`${user.displayName}'s Avatar`}
+              className="w-8 h-8 rounded-full"
+            />
+          )}
+          <span>{user.displayName}</span>
+        </div>
+        <span className="text-sm">{user.xp} XP</span>
+      </li>
+    );
+  })}
+</ul>
     </div>
   );
 };
