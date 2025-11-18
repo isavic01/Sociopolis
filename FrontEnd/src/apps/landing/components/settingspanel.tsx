@@ -4,23 +4,42 @@ import {
   collection,
   serverTimestamp,
   deleteDoc,
+  updateDoc,
   doc,
   getDoc,
+  query,
+  where,
+  getDocs
 } from "firebase/firestore";
 import { deleteUser } from "firebase/auth";
 import { db, auth } from "../../services/firebaseConfig";
 import { awardXP } from "../../services/xpService";
 
+
+type TargetUser = {
+  uid: string;
+  email?: string;
+  displayName?: string;
+  [key: string]: any; // optional: allows extra fields like XP, admin, etc.
+};
+
+
 export default function SettingsPanel() {
   const [reportText, setReportText] = useState("");
   const [status, setStatus] = useState("");
   const [deleteStatus, setDeleteStatus] = useState("");
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletionTarget, setDeletionTarget] = useState<"self" | "admin" | null>(null);
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [musicEnabled, setMusicEnabled] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [xpAmount, setXpAmount] = useState("");
   const [xpStatus, setXpStatus] = useState("");
+  const [searchUser, setSearchUser] = useState("");
+  const [searchStatus, setSearchStatus] = useState("");
+  const [targetUser, setTargetUser] = useState<TargetUser | null>(null);
+  const [adminToggleStatus, setAdminToggleStatus] = useState("");
+  const [showAdminConfirmModal, setShowAdminConfirmModal] = useState(false);
+  const [pendingAdminValue, setPendingAdminValue] = useState<boolean | null>(null);
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -71,55 +90,116 @@ export default function SettingsPanel() {
     }
   }
 
-  
+  async function handleSearchUser() {
+    setSearchStatus("Searching...");
+    setTargetUser(null);
 
-  async function handleAwardXP() {
-    const user = auth.currentUser;
-    const amount = parseInt(xpAmount);
+    try {
+      // If input looks like an email, query by email
+      if (searchUser.includes("@")) {
+        const q = query(collection(db, "users"), where("email", "==", searchUser));
+        const querySnapshot = await getDocs(q);
 
-    if (!user) {
-      setXpStatus("no user signed in");
-      return;
+        if (!querySnapshot.empty) {
+          const docSnap = querySnapshot.docs[0];
+          setTargetUser({ uid: docSnap.id, ...docSnap.data() });
+          setSearchStatus("User found by email.");
+        } else {
+          setSearchStatus("No user found with that email.");
+        }
+      } else {
+        // Otherwise treat it as UID
+        const docRef = doc(db, "users", searchUser);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setTargetUser({ uid: docSnap.id, ...docSnap.data() });
+          setSearchStatus("User found by UID.");
+        } else {
+          setSearchStatus("No user found with that UID.");
+        }
+      }
+    } catch (err) {
+      console.error("Error searching user:", err);
+      setSearchStatus("Search failed.");
     }
+  }
 
-    if (isNaN(amount) || amount <= 0) {
-      setXpStatus("please enter a valid number");
+  async function handleAwardXPToUser() {
+    const amount = parseInt(xpAmount);
+    if (!targetUser || isNaN(amount)) {
+      setXpStatus("Invalid target or amount.");
       return;
     }
 
     try {
-      const newXP = await awardXP(user.uid, amount);
+      const newXP = await awardXP(targetUser.uid, amount);
       setXpAmount("");
-      setXpStatus(`success new xp is: ${newXP}`);
+      setXpStatus(`XP updated. New XP: ${newXP}`);
     } catch (err) {
-      console.error("error awarding xp:", err);
-      setXpStatus("failed to award xp");
+      console.error("Error updating XP:", err);
+      setXpStatus("Failed to update XP.");
     }
   }
 
+  async function handleDeleteUserAccount() {
+  if (!targetUser) {
+    setDeleteStatus("No target user.");
+    return;
+  }
+
+  try {
+    // Delete from users collection
+    await deleteDoc(doc(db, "users", targetUser.uid));
+
+    // Delete from leaderboard collection
+    await deleteDoc(doc(db, "leaderboard", targetUser.uid));
+
+    setDeleteStatus("User account and leaderboard entry deleted.");
+    setTargetUser(null);
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    setDeleteStatus("Failed to delete user.");
+  }
+}
 
 
   async function handleDeleteAccount() {
-    const user = auth.currentUser;
-    if (!user) {
-      setDeleteStatus("No user is signed in.");
-      return;
-    }
+  const user = auth.currentUser;
+  if (!user) {
+    setDeleteStatus("No user is signed in.");
+    return;
+  }
 
-    try {
-      await deleteDoc(doc(db, "users", user.uid));
-      await deleteUser(user);
-      setDeleteStatus("Your account has been permanently deleted.");
-      setShowDeleteModal(false);
-    } catch (err: any) {
-      console.error("Error deleting account:", err);
-      if (err.code === "auth/requires-recent-login") {
-        setDeleteStatus("Please reauthenticate to delete your account.");
-      } else {
-        setDeleteStatus("Failed to delete account.");
-      }
+  try {
+    await deleteDoc(doc(db, "users", user.uid));
+    await deleteDoc(doc(db, "leaderboard", user.uid));
+    await deleteUser(user);
+    setDeleteStatus("Your account and leaderboard entry have been deleted.");
+    setDeletionTarget(null);
+  } catch (err: any) {
+    console.error("Error deleting account:", err);
+    if (err.code === "auth/requires-recent-login") {
+      setDeleteStatus("Please reauthenticate to delete your account.");
+    } else {
+      setDeleteStatus("Failed to delete account.");
     }
   }
+}
+async function handleToggleAdmin(newValue: boolean | null) {
+  if (!targetUser || newValue === null) return;
+
+  try {
+    await updateDoc(doc(db, "users", targetUser.uid), {
+      admin: newValue,
+    });
+    setTargetUser({ ...targetUser, admin: newValue });
+    setAdminToggleStatus(`Admin status updated to: ${newValue ? "Admin" : "Not Admin"}`);
+  } catch (err) {
+    console.error("Error updating admin status:", err);
+    setAdminToggleStatus("Failed to update admin status.");
+  }
+}
 
   return (
     <div className="panel-content relative">
@@ -188,30 +268,88 @@ export default function SettingsPanel() {
         </p>
       </div>
 
-      
+
 
       {/* award xp */}
       {isAdmin && (
         <div className="mt-8 max-w-[600px] border-t pt-6">
-          <h4 className="text-lg font-semibold mb-2">give xp(admin)</h4>
-          <div className="flex gap-2">
+          <h4 className="text-lg font-semibold mb-2">Admin Controls</h4>
+
+          {/* Search User */}
+          <div className="mb-4">
             <input
-              type="number"
-              value={xpAmount}
-              onChange={(e) => setXpAmount(e.target.value)}
-              placeholder="enter xp amount"
-              className="flex-1 border rounded p-2"
-              min="1"
+              type="text"
+              value={searchUser}
+              onChange={(e) => setSearchUser(e.target.value)}
+              placeholder="Enter user email or UID"
+              className="w-full border rounded p-2"
             />
             <button
-              onClick={handleAwardXP}
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+              onClick={handleSearchUser}
+              className="mt-2 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
             >
-              Award XP
+              Search User
             </button>
+            <p className="text-sm mt-2">{searchStatus}</p>
           </div>
-          <p className="mt-2 text-sm">{xpStatus}</p>
+
+          {/* Award/Remove XP */}
+          {targetUser && (
+            <div className="mb-4">
+              <p className="text-sm text-gray-700 mb-2">
+                Target: {targetUser.displayName || targetUser.email || targetUser.uid} Current XP: {targetUser.xp}
+              </p>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={xpAmount}
+                  onChange={(e) => setXpAmount(e.target.value)}
+                  placeholder="XP amount (+/-)"
+                  className="flex-1 border rounded p-2"
+                />
+                <button
+                  onClick={handleAwardXPToUser}
+                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                >
+                  Update XP
+                </button>
+              </div>
+              <p className="mt-2 text-sm">{xpStatus}</p>
+            </div>
+          )}
+
+          {/* Delete User */}
+          {targetUser && (
+            <div className="mt-4">
+              <button
+                onClick={() => setDeletionTarget("admin")}
+                className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
+              >
+                Delete This User
+              </button>
+              <p className="mt-2 text-sm text-red-600">{deleteStatus}</p>
+              <div className="mt-6">
+                <p className="text-sm text-gray-700 mb-2">
+                  Admin Status: {targetUser.admin ? "✅ Admin" : "❌ Not Admin"}
+                </p>
+                <button
+                  onClick={() => {
+                    setPendingAdminValue(!targetUser.admin);
+                    setShowAdminConfirmModal(true);
+                  }}
+                  className={`w-full py-2 rounded text-white ${
+                    targetUser.admin ? "bg-yellow-500 hover:bg-yellow-600" : "bg-blue-500 hover:bg-blue-600"
+                  }`}
+                >
+                  {targetUser.admin ? "Revoke Admin" : "Make Admin"}
+                </button>
+                <p className="mt-2 text-sm">{adminToggleStatus}</p>
+              </div>
+            </div>
+
+          )}
         </div>
+
       )}
 
 
@@ -223,7 +361,7 @@ export default function SettingsPanel() {
           This will permanently delete your account and all associated data.
         </p>
         <button
-          onClick={() => setShowDeleteModal(true)}
+          onClick={() => setDeletionTarget("self")}
           className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
         >
           Delete My Account
@@ -231,27 +369,65 @@ export default function SettingsPanel() {
         <p className="mt-2 text-sm text-red-600">{deleteStatus}</p>
       </div>
 
-      {/* Confirmation Modal */}
-      {showDeleteModal && (
+      {showAdminConfirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/50"></div>
           <div className="relative bg-white rounded-lg p-6 w-[90%] max-w-md shadow-lg z-10">
-            <h4 className="text-lg font-semibold mb-4">
-              Confirm Account Deletion
-            </h4>
+            <h4 className="text-lg font-semibold mb-4">Confirm Admin Change</h4>
             <p className="text-sm text-gray-700 mb-6">
-              Are you sure you want to permanently delete your account? This
-              action cannot be undone.
+              Are you sure you want to {pendingAdminValue ? "grant" : "revoke"} admin privileges for this user?
             </p>
             <div className="flex justify-end space-x-4">
               <button
-                onClick={() => setShowDeleteModal(false)}
+                onClick={() => setShowAdminConfirmModal(false)}
                 className="px-4 py-2 bg-gray-300 text-white rounded hover:bg-gray-400"
               >
                 Cancel
               </button>
               <button
-                onClick={handleDeleteAccount}
+                onClick={async () => {
+                  await handleToggleAdmin(pendingAdminValue);
+                  setShowAdminConfirmModal(false);
+                }}
+                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Confirmation Modal */}
+      {deletionTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="relative bg-white rounded-lg p-6 w-[90%] max-w-md shadow-lg z-10">
+            <h4 className="text-lg font-semibold mb-4">
+              {deletionTarget === "self"
+                ? "Confirm Account Deletion"
+                : "Confirm User Deletion"}
+            </h4>
+            <p className="text-sm text-gray-700 mb-6">
+              {deletionTarget === "self"
+                ? "Are you sure you want to permanently delete your account? This action cannot be undone."
+                : "Are you sure you want to permanently delete this user's account? This action cannot be undone."}
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setDeletionTarget(null)}
+                className="px-4 py-2 bg-gray-300 text-white rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  if (deletionTarget === "self") {
+                    await handleDeleteAccount();
+                  } else {
+                    await handleDeleteUserAccount();
+                  }
+                  setDeletionTarget(null);
+                }}
                 className="px-4 py-2 !bg-red-500 text-white rounded"
               >
                 Delete
