@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   addDoc,
   collection,
   serverTimestamp,
   deleteDoc,
   doc,
+  getDoc,
 } from "firebase/firestore";
 import { deleteUser } from "firebase/auth";
 import { db, auth } from "../../services/firebaseConfig";
+import { awardXP } from "../../services/xpService";
 
 export default function SettingsPanel() {
   const [reportText, setReportText] = useState("");
@@ -16,6 +18,26 @@ export default function SettingsPanel() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [musicEnabled, setMusicEnabled] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [xpAmount, setXpAmount] = useState("");
+  const [xpStatus, setXpStatus] = useState("");
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            setIsAdmin(userDoc.data().admin || false);
+          }
+        } catch (err) {
+          console.error("Error checking admin status:", err);
+        }
+      }
+    };
+    checkAdminStatus();
+  }, []);
 
   async function handleReport() {
     const user = auth.currentUser;
@@ -48,6 +70,34 @@ export default function SettingsPanel() {
       setStatus("Failed to submit");
     }
   }
+
+  
+
+  async function handleAwardXP() {
+    const user = auth.currentUser;
+    const amount = parseInt(xpAmount);
+
+    if (!user) {
+      setXpStatus("no user signed in");
+      return;
+    }
+
+    if (isNaN(amount) || amount <= 0) {
+      setXpStatus("please enter a valid number");
+      return;
+    }
+
+    try {
+      const newXP = await awardXP(user.uid, amount);
+      setXpAmount("");
+      setXpStatus(`success new xp is: ${newXP}`);
+    } catch (err) {
+      console.error("error awarding xp:", err);
+      setXpStatus("failed to award xp");
+    }
+  }
+
+
 
   async function handleDeleteAccount() {
     const user = auth.currentUser;
@@ -137,6 +187,34 @@ export default function SettingsPanel() {
           /500
         </p>
       </div>
+
+      
+
+      {/* award xp */}
+      {isAdmin && (
+        <div className="mt-8 max-w-[600px] border-t pt-6">
+          <h4 className="text-lg font-semibold mb-2">give xp(admin)</h4>
+          <div className="flex gap-2">
+            <input
+              type="number"
+              value={xpAmount}
+              onChange={(e) => setXpAmount(e.target.value)}
+              placeholder="enter xp amount"
+              className="flex-1 border rounded p-2"
+              min="1"
+            />
+            <button
+              onClick={handleAwardXP}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              Award XP
+            </button>
+          </div>
+          <p className="mt-2 text-sm">{xpStatus}</p>
+        </div>
+      )}
+
+
 
       {/* Delete Account */}
       <div className="mt-12 max-w-[600px] border-t pt-6">
