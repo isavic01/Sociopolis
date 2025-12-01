@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { doc, getDoc, getDocs, collection } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../../services/firebaseConfig";
 
 type User = {
@@ -14,34 +14,74 @@ export const LeaderboardPanel = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  const fetchLeaderboard = async () => {
-    const leaderboardDoc = await getDoc(doc(db, "leaderboard", "top10"));
-    const topUserIds: string[] = leaderboardDoc.exists()
-      ? leaderboardDoc.data().topUserIds ?? []
-      : [];
+    console.log(`🏆 Setting up leaderboard listener`);
+    
+    // Listen to leaderboard updates
+    const leaderboardRef = doc(db, "leaderboard", "top10");
+    
+    const unsubscribe = onSnapshot(leaderboardRef, async (snapshot) => {
+      console.log(`📡 Leaderboard snapshot received`);
+      
+      try {
+        if (!snapshot.exists()) {
+          console.log(`❌ No leaderboard document found`);
+          setTopUsers([]);
+          setLoading(false);
+          return;
+        }
 
-    const userPromises = topUserIds.map(async (userId) => {
-      const userDoc = await getDoc(doc(db, "users", userId));
-      const data = userDoc.exists()
-        ? userDoc.data()
-        : { displayName: "Unknown", xp: 0, avatarUrl: null };
+        const data = snapshot.data();
+        console.log(`📊 Leaderboard document data:`, data);
+        
+        const topUserIds: string[] = data.topUserIds ?? [];
+        
+        if (topUserIds.length === 0) {
+          console.log(`⚠️ No users in leaderboard`);
+          setTopUsers([]);
+          setLoading(false);
+          return;
+        }
 
-      return {
-        id: userId,
-        displayName: data.displayName ?? "Anonymous",
-        xp: data.xp ?? 0,
-        avatarUrl: data.avatarUrl ?? null,
-      };
+        console.log(`👥 Fetching data for ${topUserIds.length} users:`, topUserIds);
+
+        // Fetch fresh user data for each user in the leaderboard
+        const userPromises = topUserIds.map(async (userId) => {
+          const userDoc = await getDoc(doc(db, "users", userId));
+          const data = userDoc.exists()
+            ? userDoc.data()
+            : { displayName: "Unknown", xp: 0, avatarUrl: null };
+
+          console.log(`👤 User ${userId} data:`, { xp: data.xp, displayName: data.displayName });
+
+          return {
+            id: userId,
+            displayName: data.displayName ?? "Anonymous",
+            xp: data.xp ?? 0,
+            avatarUrl: data.avatarUrl ?? null,
+          };
+        });
+
+        const users = await Promise.all(userPromises);
+        // Sort by XP in descending order to ensure proper ranking
+        const sortedUsers = users.sort((a, b) => b.xp - a.xp);
+        
+        console.log(`🎯 Final sorted leaderboard:`, sortedUsers.map(u => ({ name: u.displayName, xp: u.xp })));
+        
+        setTopUsers(sortedUsers);
+        setLoading(false);
+        console.log("🏆 Leaderboard updated with latest XP data");
+        
+      } catch (error) {
+        console.error("❌ Error fetching leaderboard:", error);
+        setLoading(false);
+      }
     });
 
-    const users = await Promise.all(userPromises);
-    setTopUsers(users);
-    setLoading(false);
-  };
-
-  fetchLeaderboard();
-}, []);
-
+    return () => {
+      console.log(`🧹 Cleaning up leaderboard listener`);
+      unsubscribe();
+    };
+  }, []);
 
   if (loading) {
     return <p className="p-2 text-center">Loading leaderboard…</p>;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import { auth } from "../../services/firebaseConfig";
 import { db } from "../../services/firebaseConfig";
@@ -33,30 +33,45 @@ export const ProfilePanel = () => {
   };
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      if (!user) return;
+    if (!user || authLoading) return;
 
-      const ref = doc(db, "users", user.uid);
-      const snapshot = await getDoc(ref);
+    console.log(`👤 Setting up profile listener for user: ${user.uid}`);
 
+    // Set up real-time listener for user profile updates
+    const userRef = doc(db, "users", user.uid);
+    
+    const unsubscribe = onSnapshot(userRef, (snapshot) => {
+      console.log(`📡 Profile snapshot received for user ${user.uid}`);
+      
       if (snapshot.exists()) {
         const data = snapshot.data() as Omit<UserProfile, "id">;
-        setProfile({
+        const newProfile = {
           id: snapshot.id,
           displayName: data.displayName ?? "Anonymous",
           xp: data.xp ?? 0,
           avatarUrl: data.avatarUrl,
           currentLesson: data.currentLesson ?? "Intro to Sociology",
           streaks: data.streaks ?? 0,
-        });
+        };
+        
+        setProfile(newProfile);
+        console.log("🔄 Profile XP updated to:", data.xp ?? 0);
+        console.log("📊 Full profile data:", newProfile);
+      } else {
+        console.log("❌ No profile document found for user:", user.uid);
+        setProfile(null);
       }
-
       setLoading(false);
-    };
+    }, (error) => {
+      console.error("❌ Error listening to profile updates:", error);
+      setLoading(false);
+    });
 
-    if (!authLoading) {
-      fetchProfile();
-    }
+    // Cleanup listener on component unmount
+    return () => {
+      console.log(`🧹 Cleaning up profile listener for user: ${user.uid}`);
+      unsubscribe();
+    };
   }, [user, authLoading]);
 
   if (authLoading || loading) {

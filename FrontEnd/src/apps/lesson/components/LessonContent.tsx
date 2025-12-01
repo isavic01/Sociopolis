@@ -1,24 +1,75 @@
-import React, { useState } from 'react';
-import type { LessonContent as LessonContentType } from '../lesson';
+import React, { useState, useEffect } from 'react';
+import type { LessonContent as LessonContentType, LessonCheckIn } from '../lesson';
+import { LessonService } from '../services/lessonService';
+import { getUserXP } from '../../services/xpService';
 
 interface LessonContentProps {
   lesson: LessonContentType;
   onComplete: (score?: number) => void;
   isCompleted: boolean;
+  userId: string; // Add userId prop for XP tracking
 }
 
-export function LessonContent({ lesson, onComplete, isCompleted }: LessonContentProps) {
+export function LessonContent({ lesson, onComplete, isCompleted, userId }: LessonContentProps) {
   const [currentSection, setCurrentSection] = useState(0);
-  const [showQuiz, setShowQuiz] = useState(false);
+  const [showCheckIns, setShowCheckIns] = useState(false);
+  const [currentCheckIn, setCurrentCheckIn] = useState(0);
+  const [checkInAnswers, setCheckInAnswers] = useState<Record<string, number>>({});
+  const [checkInResults, setCheckInResults] = useState<Record<string, boolean>>({});
+  const [totalXP, setTotalXP] = useState(0);
+  const [userTotalXP, setUserTotalXP] = useState<number | null>(null);
+  const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
 
-  // Split content into sections for better readability
-  const sections = lesson.content.split('\n\n').filter(section => section.trim());
+  // Use the new structured sections
+  const sections = lesson.sections || [];
+  const checkIns = lesson.checkIns || [];
+
+  // Load user's current XP and previous check-in progress on component mount
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        // Fetch current user XP from backend
+        const currentXP = await getUserXP(userId);
+        setUserTotalXP(currentXP);
+
+        // Load check-in progress
+        const progress = await LessonService.getCheckInProgress(userId, lesson.id);
+        
+        // Restore previous answers and results
+        const answers: Record<string, number> = {};
+        const results: Record<string, boolean> = {};
+        let earnedXP = 0;
+
+        Object.entries(progress).forEach(([checkInId, data]) => {
+          const checkIn = checkIns.find(ci => ci.id === checkInId);
+          if (checkIn) {
+            answers[checkInId] = data.correct ? checkIn.correctIndex : -1; // Mark as answered
+            results[checkInId] = data.correct;
+            if (data.correct) {
+              earnedXP += data.xpEarned;
+            }
+          }
+        });
+
+        setCheckInAnswers(answers);
+        setCheckInResults(results);
+        setTotalXP(earnedXP);
+      } catch (error) {
+        console.error('Failed to load user data:', error);
+      }
+    };
+
+    if (userId && lesson.id) {
+      loadUserData();
+    }
+  }, [userId, lesson.id, checkIns]);
 
   const handleNextSection = () => {
     if (currentSection < sections.length - 1) {
       setCurrentSection(currentSection + 1);
     } else {
-      setShowQuiz(true);
+      // All sections completed, start check-ins
+      setShowCheckIns(true);
     }
   };
 
@@ -28,14 +79,88 @@ export function LessonContent({ lesson, onComplete, isCompleted }: LessonContent
     }
   };
 
-  const handleCompleteLesson = () => {
-    onComplete();
+  const handleCheckInAnswer = async (checkInId: string, selectedAnswer: number) => {
+    if (isSubmittingAnswer) return; // Prevent double submission
+    
+    setIsSubmittingAnswer(true);
+    
+    try {
+      // Submit to backend and get real-time XP update
+      const result = await LessonService.submitCheckIn(userId, lesson.id, checkInId, selectedAnswer);
+      
+      // Update local state
+      setCheckInAnswers(prev => ({ ...prev, [checkInId]: selectedAnswer }));
+      setCheckInResults(prev => ({ ...prev, [checkInId]: result.correct }));
+      
+      // Update XP display
+      if (result.correct) {
+        setTotalXP(prev => prev + result.xpReward);
+        
+        // Update user's total XP if available from backend
+        if (result.totalXP !== undefined) {
+          setUserTotalXP(result.totalXP);
+        }
+      }
+
+      // Auto-advance after showing feedback
+      setTimeout(() => {
+        if (currentCheckIn < checkIns.length - 1) {
+          setCurrentCheckIn(currentCheckIn + 1);
+        } else {
+          // All check-ins completed
+          onComplete(totalXP + (result.correct ? result.xpReward : 0));
+        }
+        setIsSubmittingAnswer(false);
+      }, 1500);
+      
+    } catch (error) {
+      console.error('Failed to submit check-in:', error);
+      setIsSubmittingAnswer(false);
+      
+      // Show error feedback
+      // You could add error state here if needed
+    }
+  };
+
+  const getCheckInFeedback = (checkInId: string) => {
+    const checkIn = checkIns.find(ci => ci.id === checkInId);
+    const result = checkInResults[checkInId];
+    
+    if (result === undefined) return null;
+    
+    return {
+      isCorrect: result,
+      message: result 
+        ? `Correct! +${checkIn?.xpReward} XP` 
+        : `Not quite right. The correct answer is: ${checkIn?.options[checkIn.correctIndex]}`
+    };
   };
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
+      {/* XP Display Header */}
+      {userTotalXP !== null && (
+        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-3 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <svg className="w-6 h-6 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+              </svg>
+              <span className="font-semibold text-yellow-800">
+                Total XP: {userTotalXP}
+              </span>
+            </div>
+            {totalXP > 0 && (
+              <span className="text-sm text-yellow-700 bg-yellow-100 px-2 py-1 rounded">
+                +{totalXP} from this lesson
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Video Section */}
-      {lesson.videoUrl && (
+      {lesson.videoUrl && !showCheckIns && (
         <div className="mb-6">
           <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
             <iframe
@@ -48,12 +173,12 @@ export function LessonContent({ lesson, onComplete, isCompleted }: LessonContent
         </div>
       )}
 
-      {/* Content Sections */}
-      {!showQuiz && (
+      {/* Lesson Content Sections */}
+      {!showCheckIns && (
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900">
-              Section {currentSection + 1} of {sections.length}
+              {sections[currentSection]?.title || `Section ${currentSection + 1}`}
             </h2>
             <div className="text-sm text-gray-500">
               {Math.round(((currentSection + 1) / sections.length) * 100)}% Complete
@@ -71,9 +196,9 @@ export function LessonContent({ lesson, onComplete, isCompleted }: LessonContent
           {/* Current Section Content */}
           <div className="prose prose-lg max-w-none mb-8">
             <div 
-              className="text-gray-700 leading-relaxed"
+              className="text-gray-700 leading-relaxed whitespace-pre-wrap"
               dangerouslySetInnerHTML={{ 
-                __html: sections[currentSection]?.replace(/\n/g, '<br />') || '' 
+                __html: sections[currentSection]?.content?.replace(/\n/g, '<br />') || '' 
               }}
             />
           </div>
@@ -95,7 +220,7 @@ export function LessonContent({ lesson, onComplete, isCompleted }: LessonContent
               onClick={handleNextSection}
               className="flex items-center px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              {currentSection === sections.length - 1 ? 'Complete Lesson' : 'Next'}
+              {currentSection === sections.length - 1 ? 'Start Check-ins' : 'Next'}
               <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -104,8 +229,114 @@ export function LessonContent({ lesson, onComplete, isCompleted }: LessonContent
         </div>
       )}
 
+      {/* Check-in Questions */}
+      {showCheckIns && currentCheckIn < checkIns.length && (
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-gray-900">
+              Knowledge Check
+            </h2>
+            <div className="text-sm text-gray-500">
+              Question {currentCheckIn + 1} of {checkIns.length}
+            </div>
+          </div>
+
+          {/* Check-in Progress Bar */}
+          <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+            <div
+              className="bg-green-600 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${((currentCheckIn + 1) / checkIns.length) * 100}%` }}
+            />
+          </div>
+
+          <div className="bg-gray-50 rounded-lg p-6">
+            {(() => {
+              const currentQ = checkIns[currentCheckIn];
+              const hasAnswered = checkInAnswers[currentQ.id] !== undefined;
+              const feedback = getCheckInFeedback(currentQ.id);
+
+              return (
+                <>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    {currentQ.prompt}
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    {currentQ.options.map((option, index) => {
+                      const isSelected = checkInAnswers[currentQ.id] === index;
+                      const isCorrect = index === currentQ.correctIndex;
+                      
+                      let buttonClass = "w-full text-left p-4 rounded-lg border transition-colors ";
+                      
+                      if (!hasAnswered && !isSubmittingAnswer) {
+                        buttonClass += "border-gray-300 hover:border-blue-500 hover:bg-blue-50";
+                      } else {
+                        if (isSelected) {
+                          buttonClass += isCorrect 
+                            ? "border-green-500 bg-green-100 text-green-800"
+                            : "border-red-500 bg-red-100 text-red-800";
+                        } else if (isCorrect) {
+                          buttonClass += "border-green-500 bg-green-50 text-green-700";
+                        } else {
+                          buttonClass += "border-gray-300 bg-gray-50 text-gray-500";
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => !hasAnswered && !isSubmittingAnswer && handleCheckInAnswer(currentQ.id, index)}
+                          disabled={hasAnswered || isSubmittingAnswer}
+                          className={buttonClass}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span>{option}</span>
+                            {isSubmittingAnswer && isSelected && (
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {feedback && (
+                    <div className={`mt-4 p-3 rounded-lg ${
+                      feedback.isCorrect 
+                        ? 'bg-green-100 text-green-800 border border-green-200'
+                        : 'bg-red-100 text-red-800 border border-red-200'
+                    }`}>
+                      <div className="flex items-center">
+                        <svg 
+                          className={`w-5 h-5 mr-2 ${feedback.isCorrect ? 'text-green-600' : 'text-red-600'}`}
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          {feedback.isCorrect ? (
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          ) : (
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          )}
+                        </svg>
+                        {feedback.message}
+                        {feedback.isCorrect && userTotalXP !== null && (
+                          <span className="ml-2 text-sm font-semibold">
+                            (Total: {userTotalXP} XP)
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      )}
+
       {/* Completion Section */}
-      {showQuiz && (
+      {showCheckIns && currentCheckIn >= checkIns.length && (
         <div className="text-center py-8">
           <div className="mb-6">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -114,33 +345,34 @@ export function LessonContent({ lesson, onComplete, isCompleted }: LessonContent
               </svg>
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">
-              {isCompleted ? 'Lesson Already Completed!' : 'Congratulations!'}
+              Lesson Complete! 🎉
             </h3>
-            <p className="text-gray-600 mb-6">
-              {isCompleted 
-                ? 'You have already completed this lesson. Great job!' 
-                : 'You have finished reading all the content. Ready to mark this lesson as complete?'
-              }
+            <p className="text-gray-600 mb-4">
+              You've completed all sections and check-ins for this lesson.
             </p>
-          </div>
-
-          {!isCompleted && (
-            <button
-              onClick={handleCompleteLesson}
-              className="px-8 py-3 text-lg font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
-            >
-              Mark as Complete
-            </button>
-          )}
-
-          {isCompleted && (
-            <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-lg">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Completed
+            
+            {/* XP Summary */}
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 inline-block">
+              <div className="flex items-center justify-center">
+                <svg className="w-6 h-6 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                </svg>
+                <span className="text-lg font-semibold text-yellow-800">
+                  XP Earned This Lesson: {totalXP}
+                </span>
+              </div>
+              {userTotalXP !== null && (
+                <div className="text-sm text-yellow-700 mt-1">
+                  Your Total XP: {userTotalXP}
+                </div>
+              )}
             </div>
-          )}
+
+            {/* Results Summary */}
+            <div className="text-sm text-gray-600 mb-6">
+              Correct Answers: {Object.values(checkInResults).filter(Boolean).length} / {checkIns.length}
+            </div>
+          </div>
         </div>
       )}
     </div>

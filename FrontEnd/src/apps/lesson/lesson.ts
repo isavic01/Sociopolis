@@ -1,14 +1,30 @@
 // Types and interfaces for the lesson system
+
+export interface LessonSection {
+  title: string;
+  content: string;
+}
+
+export interface LessonCheckIn {
+  id: string;
+  section: number;
+  prompt: string;
+  options: string[];
+  correctIndex: number;
+  xpReward: number;
+}
+
 export interface LessonContent {
   id: string;
   title: string;
   description: string;
-  content: string;
-  imageUrl?: string;
-  videoUrl?: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   estimatedDuration: number; // in minutes
   tags: string[];
+  sections: LessonSection[];
+  checkIns: LessonCheckIn[];
+  imageUrl?: string;
+  videoUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }
