@@ -1,5 +1,7 @@
 import { StrictMode } from 'react'
 
+import './App.css'
+import './styles/main.scss'
 import './index.css'
 import App from './App.jsx'
 import React from "react";

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import "./styles/main.scss";
 
 const bodyCopy = `Design tokens drive consistent typography, motion, and color across Sociopolis interfaces. Adjust copy, spacing, and layout without redefining the core scale.`;
 const leadCopy = `These samples pull directly from the new typography and color maps so you can confirm the mixins compile to usable CSS variables.`;

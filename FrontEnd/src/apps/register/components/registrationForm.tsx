@@ -72,13 +72,25 @@ export default function RegisterScreen() {
 
   return (
     <div className = "p-16 py-12 flex flex-col justify-center items-center gap-y-4">
-      <h1 className="h2 !text-4xl">Welcome to Sociopolis!</h1>
-      <h2 className="h3 !font-normal !text-2xl">Let's create an account to get started.</h2>
+      <h1 className="h2 text-4xl">Welcome to Sociopolis!</h1>
+      <h2 className="h3 font-normal text-2xl">Let's create an account to get started.</h2>
       <img className="h-auto w-35" src="/src/assets/soci.png"></img>
 
-      <form onSubmit={handleRegister} className="flex flex-col justify-center items-center !gap-y-2">
+      {/* Migration : replace inline layout utilities with the shared form classes below
+          Example (drop-in):
+          <form claform__label" htmlFor="name">Display name</label>
+              <input id="name" className="form__input" placeholder="Display-Name (Public)" />
+              <div className="form__hint">small helper text</div>
+            </div>
+
+            <div className="form__actions">
+              <button type="submit" className="btn-cta btn-block">Register</button>
+            </div>
+          </form>
+      */}
+      <form onSubmit={handleRegister} className="flex flex-col justify-center items-center gap-y-2">
         <input
-          className="!bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
+          className="form-input"
           placeholder="Display-Name (Public)"
           type="text"
           value={name}
@@ -87,7 +99,7 @@ export default function RegisterScreen() {
         />
 
         <input
-          className="!bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
+          className="bg-[#F7F7F7] border text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] px-4 py-2 mx-2 rounded-lg w-full focus:outline-none"
           type="number"
           placeholder="Age"
           value={age}
@@ -96,7 +108,7 @@ export default function RegisterScreen() {
         />
 
         <input
-          className="!bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
+          className="bg-[#F7F7F7] border text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] px-4 py-2 mx-2 rounded-lg w-full focus:outline-none"
           placeholder="Email"
           type="email"
           value={email}
@@ -105,7 +117,7 @@ export default function RegisterScreen() {
         />
 
         <input
-          className="!bg-[#F7F7F7] !border !text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none"
+          className="bg-[#F7F7F7] border text-[#C0C0C0] border-[#D9D9D9] focus:border-[#75BBFF] px-4 py-2 mx-2 rounded-lg w-full focus:outline-none"
           type="password"
           placeholder="Password"
           value={password}
@@ -124,7 +136,7 @@ export default function RegisterScreen() {
             I accept the{' '}
             <button
               type="button"
-              className="!bg-[#F7F7F7] !text-[#838080] !border p !border-[#D9D9D9] !px-4 !py-2 !mx-2 !rounded-lg focus:outline-none"
+              className="btn-ghost--underline"
               onClick={() => setShowTerms(true)}
             >
               Terms & Conditions
@@ -132,7 +144,7 @@ export default function RegisterScreen() {
             and{' '}
             <button
               type="button"
-              className="!bg-[#F7F7F7] !text-[#838080] !border p !border-[#D9D9D9] !px-4 !py-2 !mx-2 !rounded-lg focus:outline-none"
+              className="btn-ghost--underline"
               onClick={() => setShowPrivacy(true)}
             >
               Privacy Policy

@@ -9,12 +9,4 @@
 
 .subheading { @include mixins.heading(sub); }
 
-p, .text { @include mixins.body(md); }
-.lead { @include mixins.body(lead); }
-
-.label-strong { @include mixins.label(md-700); }
-.label { @include mixins.label(md-600); }
-
-.btn-form { @include mixins.button(form); }
-.btn-cta  { @include mixins.button(cta); }
-.btn-sm   { @include mixins.button(sm); }
+p, .text { @include mixins.body(xs); }

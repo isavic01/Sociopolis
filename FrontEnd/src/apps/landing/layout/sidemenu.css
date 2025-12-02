@@ -41,20 +41,7 @@ Wrapper for the entire side menu
 }
 
 /* Menu buttons */
-.menu-column button {
-  padding: 12px 16px;
-  border: none;
-  background: none;
-  color: #18100e; /*Placeholder light mode until toggle code done */
-  font-size: 16px;
-  cursor: pointer;
-  text-align: left;
-  transition: background-color 0.2s ease;
-}
-
-.menu-column button:hover {
-  background-color: #1a1a1a; /*Placeholder light mode until toggle code done */
-}
+/* Menu button styles moved to `src/styles/components/_button.scss` */
 
 /* Panel column (optional, if rendered separately) */
 .panel-column {
@@ -71,27 +58,7 @@ Wrapper for the entire side menu
   z-index: 999;
 }
 
-.icon-button {
-    display: inline-block;
-    text-align: center;
-    vertical-align: middle;
-    border: none;
-    background: none;
-    position: fixed;
-    top: 95vh;
-    left: 0;
-    height: 5vh;
-    width: 5vh;
-    color: #000000;
-    z-index: 10000;
-}
-
-.icon-button img {
-  vertical-align: middle;
-  height: 5vh;
-  width: 5vh;
-  left: 0.7vh;
-}
+/* Icon / menu button styles moved to `src/styles/components/_button.scss` */
 
 .position {
   width: 2rem;
@@ -128,11 +95,7 @@ Wrapper for the entire side menu
   width: 30vw;
 }
 
-/* Menu buttons */
-.menu-column button {
-  color: #18100e; /*Placeholder light mode until toggle code done */
-  font-size: 16px;
-}
+/* Menu button styles moved to `src/styles/components/_button.scss` */
 
 /* Panel column (optional, if rendered separately) */
 .panel-column {
@@ -140,11 +103,7 @@ Wrapper for the entire side menu
   width: 40vw;
 }
 
-.icon-button {
-    top: 95vh;
-    height: 5vh;
-    width: 5vh;
-}
+/* Icon button sizing moved to `src/styles/components/_button.scss` */
 }
 @media (max-width: 900px) {
 
@@ -158,11 +117,7 @@ Wrapper for the entire side menu
   width: 25vw;
 }
 
-/* Menu buttons */
-.menu-column button {
-  color: #18100e; /*Placeholder light mode until toggle code done */
-  font-size: 16px;
-}
+/* Menu button styles moved to `src/styles/components/_button.scss` */
 
 /* Panel column (optional, if rendered separately) */
 .panel-column {
@@ -170,9 +125,5 @@ Wrapper for the entire side menu
   width: 60vw;
 }
 
-.icon-button {
-    top: 95vh;
-    height: 5vh;
-    width: 5vh;
-}
+/* Icon button sizing moved to `src/styles/components/_button.scss` */
 }

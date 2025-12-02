@@ -28,20 +28,7 @@
 }
 
 
-.register-nav .button {
-  background-color: #f0f5fa; /* ← Change this to your desired login button color */
-  color: #1a1a1a;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.register-nav .button:hover {
-  background-color: #d0d0d0; /* ← Optional hover color */
-}
+/* Button styles moved to `src/styles/components/_button.scss` */
 
 /* Registration form container */
 .background-register {
@@ -105,25 +92,4 @@
   color: #005a9e;
 }
 
-/* Submit button */
-button[type="submit"] {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #0078d4;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-button[type="submit"]:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-button[type="submit"]:hover:not(:disabled) {
-  background-color: #005a9e;
-}
+/* Submit/button element styles moved to `src/styles/components/_button.scss` */
