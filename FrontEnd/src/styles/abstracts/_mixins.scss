@@ -62,7 +62,7 @@
     font-family: var(--font-family-#{$role});
     font-weight: var(--font-#{$id}-weight, var(--font-#{$role}-default-weight));
     font-style: var(--font-#{$role}-style, normal);
-    font-size: var(--font-#{$id}-size-min); // replace with clamp() if desired
+    font-size: var(--font-#{$id}-size-min); // replace with clamp() when using fluid sizing
     line-height: var(--font-#{$id}-line-height);
     letter-spacing: var(--font-#{$id}-tracking);
     font-optical-sizing: var(--font-#{$role}-optical-sizing, auto);
@@ -72,7 +72,6 @@
 
 @mixin display($variant) { @include type(display, $variant); }
 @mixin label($variant)   { @include type(label, $variant); }
-@mixin button($variant)  { @include type(button, $variant); }
 @mixin heading($variant) { @include type(heading, $variant); }
 @mixin body($variant)    { @include type(body, $variant); }
 

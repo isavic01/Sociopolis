@@ -23,10 +23,10 @@ export default function WelcomePage() {
         </h1>
         <br />
         <br />
-        <button className="block w-[36vw] py-2 px-4 rounded text-white shadow-lg" style={{ backgroundColor: "#6698CC" }} onClick={() => navigate("/register")}>
+        <button className="btn" onClick={() => navigate("/register")}>
           GET STARTED
         </button>
-        <button className="block w-[36vw] py-2 px-4 rounded text-white shadow-sm" style={{ backgroundColor: "#283D52" }} onClick={() => navigate("/auth")}>
+        <button className="btn-v1" onClick={() => navigate("/auth")}>
           I ALREADY HAVE AN ACCOUNT
         </button>
       </div>
@@ -49,14 +49,14 @@ export default function WelcomePage() {
   <h1 className="h2 text-center max-w-[40vw] mb-6">
     Our Goals
   </h1>
-  <p className="text-center max-w-[65vw] !text-2xl text-[#283D52] !mb-24">
+  <p className="text-center max-w-[65vw] text-2xl text-[#283D52] mb-24">
     Sociopolis empowers learners of every background to build social literacy
     through playful, accessible pathways that honor diverse cultures. We turn
     growth into an inclusive, engaging journey where skills are practiced,
     progress is visible, and every voice belongs.
   </p>
 
-  <h1 className="h2 max-w-[40vw] mb-6 self-start px-12  !pl-32">
+  <h1 className="h2 max-w-[40vw] mb-6 self-start px-12  pl-32">
     Notable Features?
   </h1>
 </section>
@@ -69,12 +69,12 @@ export default function WelcomePage() {
   }}
 >
   {/* Heading */}
-  <h1 className="h2 max-w-[40vw] mb-6 self-start !mb-10 !pl-32">
+  <h1 className="h2 max-w-[40vw] mb-6 self-start mb-10 pl-32">
     Meet The Team
   </h1>
 
   {/* Description */}
-  <p className="text-center max-w-4xl mb-4 !text-2xl !pt-16 !pb-32">
+  <p className="text-center max-w-4xl mb-4 text-2xl pt-16 pb-32">
     Born at the University of Florida, Sociopolis is open‑source software
     making learning more accessible and enjoyable.
   </p>

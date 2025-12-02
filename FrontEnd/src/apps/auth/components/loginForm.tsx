@@ -79,7 +79,7 @@ export default function LoginScreen() {
 
         {error && <p className="error-message">{error}</p>}
 
-        <button type="submit" className="!bg-[#75BBFF] !border !text-[#FFFFFF] border-[#000000] focus:border-[#75BBFF] !px-4 !py-2 !mx-2 !rounded-lg w-full focus:outline-none">
+        <button type="submit" className="btn">
           Login
         </button>
         <button
@@ -91,14 +91,6 @@ export default function LoginScreen() {
         </button>
 
       </form>
-      <br></br>
-      <br></br>
-      <br></br>
-      <br></br>
-      <br></br>
-      <br></br>
-      <br></br>
-      <br></br>
     </div>
   )
 }

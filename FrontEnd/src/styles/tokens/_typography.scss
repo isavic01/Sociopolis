@@ -74,8 +74,8 @@ $font-sizes: (
 
   body: (
     // Text (Montserrat)
-    md:   (min: 1rem,      max: 1rem,      lh: 1.6, track: 0em), // 16px / 400 (default body)
-    lead: (min: 1.5625rem, max: 1.5625rem, lh: 1.5, track: 0em)  // 25px / 400
+    xs:   (min: 1rem,      max: 1rem,      lh: 1.6, track: 0em), // 16px / 400 (default body)
+    md: (min: 1.5625rem, max: 1.5625rem, lh: 1.5, track: 0em)  // 25px / 400
   )
 );
 
