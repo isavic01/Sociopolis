@@ -26,11 +26,21 @@ export function LessonHeader({ lesson, progress }: LessonHeaderProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6">
       <div className="flex items-start justify-between mb-4">
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{lesson.title}</h1>
-          <p className="text-lg text-gray-600 mb-4">{lesson.description}</p>
+        <div className="flex-1 min-w-0 pr-4">
+          <h1 
+            className="font-bold text-gray-900 mb-2 break-words leading-tight"
+            style={{ fontSize: 'clamp(1.25rem, 4vw, 2rem)' }}
+          >
+            {lesson.title}
+          </h1>
+          <p 
+            className="text-gray-600 mb-4 break-words"
+            style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}
+          >
+            {lesson.description}
+          </p>
           
           <div className="flex items-center gap-4 flex-wrap">
             {/* Difficulty Badge */}

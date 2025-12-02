@@ -142,12 +142,22 @@ export default function LessonPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-xl p-8 mb-6"
+          className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 mb-6"
         >
           <div className="flex items-start justify-between mb-4">
-            <div className="flex-1">
-              <h1 className="text-4xl font-bold text-gray-900 mb-3">{lesson.title}</h1>
-              <p className="text-lg text-gray-600 mb-4">{lesson.description}</p>
+            <div className="flex-1 min-w-0 pr-4">
+              <h1 
+                className="font-bold text-gray-900 mb-3 break-words leading-tight"
+                style={{ fontSize: 'clamp(1.25rem, 4vw, 2rem)' }}
+              >
+                {lesson.title}
+              </h1>
+              <p 
+                className="text-gray-600 mb-4 break-words"
+                style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}
+              >
+                {lesson.description}
+              </p>
               
               <div className="flex items-center gap-3 flex-wrap">
                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(lesson.difficulty)} text-white`}>

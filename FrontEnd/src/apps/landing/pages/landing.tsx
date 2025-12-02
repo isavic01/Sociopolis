@@ -5,9 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { HamburgerButton } from '../components/hamburgerbutton';
 import { SideMenu } from '../components/sidemenu';
 import { Background } from '../components/background';
+import { LeaderboardRankMonitor } from '../components/leaderboardrankmonitor';
 
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../../services/firebaseConfig';
+import { useAuthContext } from '../../auth/components/authProvider';
 
 import { REGIONS } from '@/apps/landing/components/houses-buttons/RegionDef';
 
@@ -15,6 +17,7 @@ export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [hoveredRegion, setHoveredRegion] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { user } = useAuthContext();
 
   const handleClick = (lessonId: string) => {
     console.log(`Navigating to lesson: ${lessonId}`);
@@ -32,6 +35,9 @@ export default function LandingPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
+      {/* Real-time leaderboard rank monitor */}
+      {user && <LeaderboardRankMonitor userId={user.uid} />}
+      
       {/* 🧭 Navigation and background */}
       <HamburgerButton onClick={() => setMenuOpen(!menuOpen)} />
       <SideMenu isOpen={menuOpen} />

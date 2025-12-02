@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import type { LessonContent as LessonContentType, LessonCheckIn } from '../lesson';
 import { LessonService } from '../services/lessonService';
-import { getUserXP } from '../../services/xpService';
+import { getUserXP, getLeaderboardStatus } from '../../services/xpService';
+import { LeaderboardNotification } from './LeaderboardNotification';
 
 interface LessonContentProps {
   lesson: LessonContentType;
@@ -19,6 +20,10 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
   const [totalXP, setTotalXP] = useState(0);
   const [userTotalXP, setUserTotalXP] = useState<number | null>(null);
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
+  const [leaderboardMessage, setLeaderboardMessage] = useState<string>('');
+  const [showLeaderboardNotification, setShowLeaderboardNotification] = useState(false);
+  const [notificationType, setNotificationType] = useState<'success' | 'info' | 'warning'>('info');
+  const [previousRank, setPreviousRank] = useState<number | null>(null);
 
   // Use the new structured sections
   const sections = lesson.sections || [];
@@ -31,6 +36,12 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
         // Fetch current user XP from backend
         const currentXP = await getUserXP(userId);
         setUserTotalXP(currentXP);
+
+        // Get initial leaderboard rank
+        const initialStatus = await getLeaderboardStatus(userId);
+        if (initialStatus.onLeaderboard && initialStatus.rank) {
+          setPreviousRank(initialStatus.rank);
+        }
 
         // Load check-in progress
         const progress = await LessonService.getCheckInProgress(userId, lesson.id);
@@ -99,6 +110,9 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
         // Update user's total XP if available from backend
         if (result.totalXP !== undefined) {
           setUserTotalXP(result.totalXP);
+          
+          // Check leaderboard status after earning XP
+          checkLeaderboardStatus(result.totalXP);
         }
       }
 
@@ -122,6 +136,39 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
     }
   };
 
+  const checkLeaderboardStatus = async (currentXP: number) => {
+    try {
+      const status = await getLeaderboardStatus(userId);
+      
+      if (status.onLeaderboard && status.rank) {
+        // Only show notification if rank changed
+        if (previousRank === null) {
+          // User just joined the leaderboard
+          setLeaderboardMessage(`🎉 Congratulations! You've joined the leaderboard at #${status.rank}!`);
+          setNotificationType('success');
+          setShowLeaderboardNotification(true);
+          setPreviousRank(status.rank);
+        } else if (status.rank < previousRank) {
+          // User moved up in rank (lower number = better rank)
+          const spotsGained = previousRank - status.rank;
+          setLeaderboardMessage(`🚀 You moved up ${spotsGained} ${spotsGained === 1 ? 'spot' : 'spots'}! Now #${status.rank}!`);
+          setNotificationType('success');
+          setShowLeaderboardNotification(true);
+          setPreviousRank(status.rank);
+        } else if (status.rank > previousRank) {
+          // User moved down - just update rank silently, no notification
+          setPreviousRank(status.rank);
+        }
+        // If rank is same as before, don't show notification
+      } else if (!status.onLeaderboard && previousRank !== null) {
+        // User fell off the leaderboard - just update silently, no notification
+        setPreviousRank(null);
+      }
+    } catch (error) {
+      console.error('Error checking leaderboard status:', error);
+    }
+  };
+
   const getCheckInFeedback = (checkInId: string) => {
     const checkIn = checkIns.find(ci => ci.id === checkInId);
     const result = checkInResults[checkInId];
@@ -137,10 +184,18 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <>
+      <LeaderboardNotification
+        message={leaderboardMessage}
+        show={showLeaderboardNotification}
+        onClose={() => setShowLeaderboardNotification(false)}
+        type={notificationType}
+      />
+      
+      <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
       {/* XP Display Header */}
       {userTotalXP !== null && (
-        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-3 mb-6">
+        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-3 mb-6 max-w-full">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <svg className="w-6 h-6 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,7 +232,10 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
       {!showCheckIns && (
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 
+              className="font-semibold text-gray-900 break-words"
+              style={{ fontSize: 'clamp(1rem, 2.5vw, 1.25rem)' }}
+            >
               {sections[currentSection]?.title || `Section ${currentSection + 1}`}
             </h2>
             <div className="text-sm text-gray-500">
@@ -194,9 +252,10 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
           </div>
 
           {/* Current Section Content */}
-          <div className="prose prose-lg max-w-none mb-8">
+          <div className="prose prose-sm sm:prose-base lg:prose-lg max-w-none mb-8">
             <div 
-              className="text-gray-700 leading-relaxed whitespace-pre-wrap"
+              className="text-gray-700 leading-relaxed whitespace-pre-wrap break-words overflow-wrap-anywhere"
+              style={{ fontSize: 'clamp(0.875rem, 1.5vw, 1rem)' }}
               dangerouslySetInnerHTML={{ 
                 __html: sections[currentSection]?.content?.replace(/\n/g, '<br />') || '' 
               }}
@@ -233,7 +292,10 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
       {showCheckIns && currentCheckIn < checkIns.length && (
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 
+              className="font-semibold text-gray-900"
+              style={{ fontSize: 'clamp(1rem, 2.5vw, 1.25rem)' }}
+            >
               Knowledge Check
             </h2>
             <div className="text-sm text-gray-500">
@@ -249,7 +311,7 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
             />
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-6">
+          <div className="bg-gray-50 rounded-lg p-4 sm:p-6 overflow-hidden">
             {(() => {
               const currentQ = checkIns[currentCheckIn];
               const hasAnswered = checkInAnswers[currentQ.id] !== undefined;
@@ -257,7 +319,10 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
 
               return (
                 <>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  <h3 
+                    className="font-medium text-gray-900 mb-4 break-words max-w-full"
+                    style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}
+                  >
                     {currentQ.prompt}
                   </h3>
                   
@@ -290,7 +355,12 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
                           className={buttonClass}
                         >
                           <div className="flex items-center justify-between">
-                            <span>{option}</span>
+                            <span 
+                              className="break-words flex-1 text-left pr-2"
+                              style={{ fontSize: 'clamp(0.875rem, 1.5vw, 1rem)' }}
+                            >
+                              {option}
+                            </span>
                             {isSubmittingAnswer && isSelected && (
                               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
                             )}
@@ -344,10 +414,16 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+            <h3 
+              className="font-bold text-gray-900 mb-2"
+              style={{ fontSize: 'clamp(1.25rem, 3vw, 1.5rem)' }}
+            >
               Lesson Complete! 🎉
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p 
+              className="text-gray-600 mb-4"
+              style={{ fontSize: 'clamp(0.875rem, 1.5vw, 1rem)' }}
+            >
               You've completed all sections and check-ins for this lesson.
             </p>
             
@@ -375,6 +451,7 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
