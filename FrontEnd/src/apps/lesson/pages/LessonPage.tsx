@@ -138,53 +138,6 @@ export default function LessonPage() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Lesson Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-xl p-8 mb-6"
-        >
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex-1">
-              <h1 className="text-4xl font-bold text-gray-900 mb-3">{lesson.title}</h1>
-              <p className="text-lg text-gray-600 mb-4">{lesson.description}</p>
-              
-              <div className="flex items-center gap-3 flex-wrap">
-                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(lesson.difficulty)} text-white`}>
-                  {lesson.difficulty.charAt(0).toUpperCase() + lesson.difficulty.slice(1)}
-                </span>
-                
-                <span className="inline-flex items-center text-sm text-gray-500">
-                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  {lesson.estimatedDuration} min
-                </span>
-              </div>
-            </div>
-            
-            <div className="ml-6 flex-shrink-0 hidden md:block">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-            </div>
-          </div>
-          
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            {lesson.tags.map((tag: string, index: number) => (
-              <span 
-                key={index}
-                className="inline-block px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-full font-medium"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-        </motion.div>
-
         {/* Lesson Content Component with XP Integration */}
         <LessonContent
           lesson={lesson}

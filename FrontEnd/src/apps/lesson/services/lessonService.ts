@@ -377,7 +377,7 @@ export class LessonFirebaseService {
   }
 
   // Enhanced method to handle check-ins and award XP to backend
-  static async submitCheckIn(userId: string, lessonId: string, checkInId: string, selectedAnswer: number): Promise<{ correct: boolean; xpReward: number; totalXP?: number }> {
+  static async submitCheckIn(userId: string, lessonId: string, checkInId: string, selectedAnswer: number, attemptId?: string): Promise<{ correct: boolean; xpReward: number; totalXP?: number }> {
     try {
       const lesson = await this.getLessonById(lessonId);
       if (!lesson) throw new Error('Lesson not found');
@@ -401,6 +401,20 @@ export class LessonFirebaseService {
 
       // Update lesson progress with check-in result
       await this.updateCheckInProgress(userId, lessonId, checkInId, correct, correct ? checkIn.xpReward : 0);
+
+      // If attemptId is provided, update the attempt record
+      if (attemptId) {
+        const attemptRef = doc(db, 'lessonAttempts', attemptId);
+        const attemptSnap = await getDoc(attemptRef);
+        if (attemptSnap.exists()) {
+          const attemptData = attemptSnap.data();
+          const checkInResults = {
+            ...attemptData.checkInResults,
+            [checkInId]: correct,
+          };
+          await updateDoc(attemptRef, { checkInResults });
+        }
+      }
 
       return { correct, xpReward: correct ? checkIn.xpReward : 0, totalXP };
     } catch (error) {
@@ -453,6 +467,112 @@ export class LessonFirebaseService {
     } catch (error) {
       console.error('Error fetching check-in progress:', error);
       return {};
+    }
+  }
+
+  // Start a new lesson attempt
+  static async startLessonAttempt(userId: string, lessonId: string): Promise<string> {
+    try {
+      const attemptId = `${userId}_${lessonId}_${Date.now()}`;
+      const attemptRef = doc(db, 'lessonAttempts', attemptId);
+      
+      await setDoc(attemptRef, {
+        attemptId,
+        userId,
+        lessonId,
+        startedAt: serverTimestamp(),
+        score: 0,
+        timeSpent: 0,
+        checkInResults: {},
+      });
+
+      console.log(`📚 Started new lesson attempt: ${attemptId}`);
+      return attemptId;
+    } catch (error) {
+      console.error('Error starting lesson attempt:', error);
+      throw error;
+    }
+  }
+
+  // Complete a lesson attempt
+  static async completeLessonAttempt(userId: string, lessonId: string, attemptId: string, finalScore: number, checkInResults: Record<string, boolean>): Promise<void> {
+    try {
+      // Update the attempt record
+      const attemptRef = doc(db, 'lessonAttempts', attemptId);
+      await updateDoc(attemptRef, {
+        completedAt: serverTimestamp(),
+        score: finalScore,
+        checkInResults,
+      });
+
+      // Update overall lesson progress
+      const progressRef = doc(db, 'userProgress', `${userId}_${lessonId}`);
+      const progressSnap = await getDoc(progressRef);
+      
+      let progressData;
+      if (progressSnap.exists()) {
+        const existing = progressSnap.data();
+        progressData = {
+          ...existing,
+          completed: true,
+          lastAccessedAt: serverTimestamp(),
+          completionCount: (existing.completionCount || 0) + 1,
+          bestScore: Math.max(existing.bestScore || 0, finalScore),
+          // Only update completion date on first completion
+          ...(existing.completionDate ? {} : { completionDate: serverTimestamp() })
+        };
+      } else {
+        progressData = {
+          userId,
+          lessonId,
+          completed: true,
+          completionDate: serverTimestamp(),
+          lastAccessedAt: serverTimestamp(),
+          completionCount: 1,
+          bestScore: finalScore,
+          score: finalScore,
+          timeSpent: 0,
+        };
+      }
+
+      await setDoc(progressRef, progressData, { merge: true });
+      console.log(`✅ Lesson attempt completed: ${attemptId}, Score: ${finalScore}`);
+    } catch (error) {
+      console.error('Error completing lesson attempt:', error);
+      throw error;
+    }
+  }
+
+  // Get user's lesson attempts history
+  static async getLessonAttempts(userId: string, lessonId: string): Promise<LessonAttempt[]> {
+    try {
+      const attemptsRef = collection(db, 'lessonAttempts');
+      const q = query(
+        attemptsRef,
+        where('userId', '==', userId),
+        where('lessonId', '==', lessonId),
+        orderBy('startedAt', 'desc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const attempts: LessonAttempt[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        attempts.push({
+          attemptId: data.attemptId,
+          startedAt: data.startedAt?.toDate() || new Date(),
+          completedAt: data.completedAt?.toDate(),
+          score: data.score || 0,
+          timeSpent: data.timeSpent || 0,
+          checkInResults: data.checkInResults || {},
+        });
+      });
+      
+      return attempts;
+    } catch (error) {
+      console.error('Error fetching lesson attempts:', error);
+      return [];
     }
   }
 }

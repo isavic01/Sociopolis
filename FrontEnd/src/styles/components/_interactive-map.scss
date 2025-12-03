@@ -1,0 +1,143 @@
+@use "../abstracts/mixins" as mx;
+
+// =======================================
+// INTERACTIVE MAP STYLES
+// =======================================
+
+.interactive-map {
+  width: 100%;
+  height: 400px;
+  position: relative;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(135deg, #E0F2FE 0%, #F0F9FF 100%);
+
+  &__container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  &__svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  &__circle-bg {
+    transition: all 300ms ease;
+  }
+
+  &__progress-circle {
+    transition: all 500ms ease;
+  }
+
+  &__glow {
+    animation: pulse-glow 2s infinite;
+  }
+
+  &__house {
+    cursor: pointer;
+    transition: all 200ms ease;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  &__house-icon {
+    transition: all 200ms ease;
+
+    .interactive-map__house:hover & {
+      filter: brightness(1.1);
+    }
+  }
+
+  &__tooltip {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--color-bg-surface);
+    border-radius: 1rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    padding: 1rem;
+    max-width: 250px;
+    z-index: 10;
+    pointer-events: none;
+    animation: tooltip-appear 200ms ease;
+  }
+
+  &__tooltip-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__tooltip-title {
+    @include mx.body(md);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  &__tooltip-description {
+    @include mx.body(xs);
+    color: var(--color-text-secondary);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  &__tooltip-status {
+    margin-top: 0.25rem;
+  }
+
+  &__tooltip-completed {
+    @include mx.body(xs);
+    color: #059669;
+    font-weight: 600;
+  }
+
+  &__tooltip-start {
+    @include mx.body(xs);
+    color: var(--color-b-30);
+    font-weight: 600;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes tooltip-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive design for interactive map
+@media (max-width: 768px) {
+  .interactive-map {
+    height: 300px;
+
+    &__tooltip {
+      position: fixed;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      top: auto;
+      max-width: none;
+    }
+  }
+}

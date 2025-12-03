@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { LessonContent as LessonContentType, LessonCheckIn } from '../lesson';
 import { LessonService } from '../services/lessonService';
 import { getUserXP } from '../../services/xpService';
@@ -11,6 +12,8 @@ interface LessonContentProps {
 }
 
 export function LessonContent({ lesson, onComplete, isCompleted, userId }: LessonContentProps) {
+  const navigate = useNavigate();
+  const [showTitleSlide, setShowTitleSlide] = useState(true); // New state for title slide
   const [currentSection, setCurrentSection] = useState(0);
   const [showCheckIns, setShowCheckIns] = useState(false);
   const [currentCheckIn, setCurrentCheckIn] = useState(0);
@@ -19,50 +22,78 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
   const [totalXP, setTotalXP] = useState(0);
   const [userTotalXP, setUserTotalXP] = useState<number | null>(null);
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
+  const [nextLesson, setNextLesson] = useState<LessonContentType | null>(null);
+  const [loadingNextLesson, setLoadingNextLesson] = useState(false);
+  // New state for attempt tracking
+  const [currentAttemptId, setCurrentAttemptId] = useState<string | null>(null);
+  const [lessonProgress, setLessonProgress] = useState<any>(null);
+  const [isRetaking, setIsRetaking] = useState(false);
 
   // Use the new structured sections
   const sections = lesson.sections || [];
   const checkIns = lesson.checkIns || [];
 
-  // Load user's current XP and previous check-in progress on component mount
+  // Start a new lesson attempt when component mounts
   useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        // Fetch current user XP from backend
-        const currentXP = await getUserXP(userId);
-        setUserTotalXP(currentXP);
-
-        // Load check-in progress
-        const progress = await LessonService.getCheckInProgress(userId, lesson.id);
-        
-        // Restore previous answers and results
-        const answers: Record<string, number> = {};
-        const results: Record<string, boolean> = {};
-        let earnedXP = 0;
-
-        Object.entries(progress).forEach(([checkInId, data]) => {
-          const checkIn = checkIns.find(ci => ci.id === checkInId);
-          if (checkIn) {
-            answers[checkInId] = data.correct ? checkIn.correctIndex : -1; // Mark as answered
-            results[checkInId] = data.correct;
-            if (data.correct) {
-              earnedXP += data.xpEarned;
-            }
+    const startNewAttempt = async () => {
+      if (userId && lesson.id) {
+        try {
+          // Get existing progress to check completion status
+          const progress = await LessonService.getUserProgress(userId, lesson.id);
+          setLessonProgress(progress);
+          
+          if (progress?.completed) {
+            setIsRetaking(true);
+            console.log(`🔄 Retaking completed lesson: ${lesson.title}`);
           }
-        });
 
-        setCheckInAnswers(answers);
-        setCheckInResults(results);
-        setTotalXP(earnedXP);
-      } catch (error) {
-        console.error('Failed to load user data:', error);
+          // Always start a new attempt (whether first time or retaking)
+          const attemptId = await LessonService.startLessonAttempt(userId, lesson.id);
+          setCurrentAttemptId(attemptId);
+          console.log(`📚 Started lesson attempt: ${attemptId}`);
+        } catch (error) {
+          console.error('Failed to start lesson attempt:', error);
+        }
       }
     };
 
-    if (userId && lesson.id) {
-      loadUserData();
-    }
-  }, [userId, lesson.id, checkIns]);
+    startNewAttempt();
+  }, [userId, lesson.id]);
+
+  // Load user's current XP (but don't load previous check-in progress for fresh attempt)
+  useEffect(() => {
+    const loadUserXP = async () => {
+      if (userId) {
+        try {
+          const currentXP = await getUserXP(userId);
+          setUserTotalXP(currentXP);
+        } catch (error) {
+          console.error('Failed to load user XP:', error);
+        }
+      }
+    };
+
+    loadUserXP();
+  }, [userId]);
+
+  // Load next lesson when check-ins are completed
+  useEffect(() => {
+    const loadNextLesson = async () => {
+      if (showCheckIns && currentCheckIn >= checkIns.length && !loadingNextLesson) {
+        setLoadingNextLesson(true);
+        try {
+          const next = await LessonService.getNextLesson(lesson.id);
+          setNextLesson(next);
+        } catch (error) {
+          console.error('Failed to load next lesson:', error);
+        } finally {
+          setLoadingNextLesson(false);
+        }
+      }
+    };
+
+    loadNextLesson();
+  }, [showCheckIns, currentCheckIn, checkIns.length, lesson.id, loadingNextLesson]);
 
   const handleNextSection = () => {
     if (currentSection < sections.length - 1) {
@@ -80,45 +111,41 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
   };
 
   const handleCheckInAnswer = async (checkInId: string, selectedAnswer: number) => {
-    if (isSubmittingAnswer) return; // Prevent double submission
+    if (isSubmittingAnswer || !currentAttemptId) return;
     
     setIsSubmittingAnswer(true);
     
     try {
-      // Submit to backend and get real-time XP update
-      const result = await LessonService.submitCheckIn(userId, lesson.id, checkInId, selectedAnswer);
-      
-      // Update local state
+      // Update local state immediately for better UX
       setCheckInAnswers(prev => ({ ...prev, [checkInId]: selectedAnswer }));
+      
+      // Submit to backend with attempt tracking
+      const result = await LessonService.submitCheckIn(userId, lesson.id, checkInId, selectedAnswer, currentAttemptId);
+      
+      // Update results state
       setCheckInResults(prev => ({ ...prev, [checkInId]: result.correct }));
       
-      // Update XP display
+      // For retaking, always award XP for correct answers (no previous result checking)
       if (result.correct) {
         setTotalXP(prev => prev + result.xpReward);
         
-        // Update user's total XP if available from backend
         if (result.totalXP !== undefined) {
           setUserTotalXP(result.totalXP);
         }
       }
 
-      // Auto-advance after showing feedback
-      setTimeout(() => {
-        if (currentCheckIn < checkIns.length - 1) {
-          setCurrentCheckIn(currentCheckIn + 1);
-        } else {
-          // All check-ins completed
-          onComplete(totalXP + (result.correct ? result.xpReward : 0));
-        }
-        setIsSubmittingAnswer(false);
-      }, 1500);
+      setIsSubmittingAnswer(false);
       
     } catch (error) {
       console.error('Failed to submit check-in:', error);
       setIsSubmittingAnswer(false);
       
-      // Show error feedback
-      // You could add error state here if needed
+      // Revert the answer if submission failed
+      setCheckInAnswers(prev => {
+        const newAnswers = { ...prev };
+        delete newAnswers[checkInId];
+        return newAnswers;
+      });
     }
   };
 
@@ -136,22 +163,100 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
     };
   };
 
+  const handleNextLesson = () => {
+    if (nextLesson) {
+      navigate(`/lesson/${nextLesson.id}`);
+    }
+  };
+
+  // Complete the lesson attempt (but don't call onComplete yet)
+  const completeLessonAttempt = async () => {
+    if (!currentAttemptId) return;
+
+    try {
+      const finalScore = totalXP;
+      await LessonService.completeLessonAttempt(userId, lesson.id, currentAttemptId, finalScore, checkInResults);
+      console.log(`✅ Completed lesson attempt with score: ${finalScore}`);
+      
+      // DON'T call onComplete here - let user stay on completion screen
+      // onComplete will be called when they click navigation buttons
+    } catch (error) {
+      console.error('Failed to complete lesson attempt:', error);
+    }
+  };
+
+  // Add function to handle moving to next question
+  const handleNextQuestion = async () => {
+    if (currentCheckIn < checkIns.length - 1) {
+      setCurrentCheckIn(currentCheckIn + 1);
+    } else {
+      // This is the last question - complete the lesson but stay on screen
+      await completeLessonAttempt();
+      setCurrentCheckIn(currentCheckIn + 1); // This will show the completion screen
+    }
+  };
+
+  // New function to handle navigation from completion screen
+  const handleNavigateFromCompletion = (destination: 'home' | 'next') => {
+    // Now call onComplete when user actually navigates away
+    onComplete(totalXP);
+    
+    if (destination === 'next' && nextLesson) {
+      navigate(`/lesson/${nextLesson.id}`);
+    } else {
+      navigate('/landing');
+    }
+  };
+
+  const handleStartLesson = () => {
+    setShowTitleSlide(false);
+    // Don't go directly to questions - start with lesson content sections
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      {/* XP Display Header */}
-      {userTotalXP !== null && (
-        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-3 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <svg className="w-6 h-6 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div className="lesson-content">
+      {/* Title Slide */}
+      {showTitleSlide && (
+        <div className="lesson-content__title-slide">
+          <div className="lesson-content__title-content">
+            <h1 className="lesson-content__main-title">{lesson.title}</h1>
+            <div className="lesson-content__lesson-meta">
+              <div className="lesson-content__duration">
+                <svg className="lesson-content__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>~15 min</span>
+              </div>
+              <div className="lesson-content__hashtags">
+                {lesson.hashtags?.map((tag, index) => (
+                  <span key={index} className="lesson-content__hashtag">#{tag}</span>
+                ))}
+              </div>
+            </div>
+            <button onClick={handleStartLesson} className="btn lesson-content__start-btn">
+              Start Lesson
+              <svg className="lesson-content__nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* XP Display Header - Only show after title slide */}
+      {!showTitleSlide && userTotalXP !== null && (
+        <div className="lesson-content__xp-header">
+          <div className="lesson-content__xp-display">
+            <div className="lesson-content__xp-main">
+              <svg className="lesson-content__xp-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
               </svg>
-              <span className="font-semibold text-yellow-800">
+              <span className="lesson-content__xp-text">
                 Total XP: {userTotalXP}
               </span>
             </div>
             {totalXP > 0 && (
-              <span className="text-sm text-yellow-700 bg-yellow-100 px-2 py-1 rounded">
+              <span className="lesson-content__xp-earned">
                 +{totalXP} from this lesson
               </span>
             )}
@@ -160,12 +265,12 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
       )}
 
       {/* Video Section */}
-      {lesson.videoUrl && !showCheckIns && (
-        <div className="mb-6">
-          <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+      {!showTitleSlide && lesson.videoUrl && !showCheckIns && (
+        <div className="lesson-content__video-wrapper">
+          <div className="lesson-content__video">
             <iframe
               src={lesson.videoUrl}
-              className="w-full h-full"
+              className="lesson-content__iframe"
               allowFullScreen
               title={`${lesson.title} Video`}
             />
@@ -174,29 +279,29 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
       )}
 
       {/* Lesson Content Sections */}
-      {!showCheckIns && (
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">
+      {!showTitleSlide && !showCheckIns && (
+        <div className="lesson-content__section">
+          <div className="lesson-content__section-header">
+            <h2 className="lesson-content__section-title">
               {sections[currentSection]?.title || `Section ${currentSection + 1}`}
             </h2>
-            <div className="text-sm text-gray-500">
+            <div className="lesson-content__progress-text">
               {Math.round(((currentSection + 1) / sections.length) * 100)}% Complete
             </div>
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+          <div className="lesson-content__progress-bar">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              className="lesson-content__progress-fill"
               style={{ width: `${((currentSection + 1) / sections.length) * 100}%` }}
             />
           </div>
 
           {/* Current Section Content */}
-          <div className="prose prose-lg max-w-none mb-8">
+          <div className="lesson-content__text">
             <div 
-              className="text-gray-700 leading-relaxed whitespace-pre-wrap"
+              className="lesson-content__content"
               dangerouslySetInnerHTML={{ 
                 __html: sections[currentSection]?.content?.replace(/\n/g, '<br />') || '' 
               }}
@@ -204,13 +309,13 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
           </div>
 
           {/* Navigation Buttons */}
-          <div className="flex justify-between items-center">
+          <div className="lesson-content__nav">
             <button
               onClick={handlePreviousSection}
               disabled={currentSection === 0}
-              className="flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="btn-ghost--underline lesson-content__nav-btn lesson-content__nav-btn--prev"
             >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="lesson-content__nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
               Previous
@@ -218,10 +323,10 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
 
             <button
               onClick={handleNextSection}
-              className="flex items-center px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+              className="btn lesson-content__nav-btn lesson-content__nav-btn--next"
             >
               {currentSection === sections.length - 1 ? 'Start Check-ins' : 'Next'}
-              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="lesson-content__nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
@@ -229,56 +334,216 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
         </div>
       )}
 
-      {/* Check-in Questions */}
+      {/* Check-in Questions - Ultra compact, no white space */}
       {showCheckIns && currentCheckIn < checkIns.length && (
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">
-              Knowledge Check
-            </h2>
-            <div className="text-sm text-gray-500">
-              Question {currentCheckIn + 1} of {checkIns.length}
-            </div>
+        <div style={{ 
+          backgroundColor: '#F5F5F5', 
+          height: '100vh', 
+          padding: '4px 12px', // Minimal padding
+          fontFamily: 'system-ui, -apple-system, sans-serif',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          {/* Header with Quit button - Ultra minimal */}
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'flex-end', 
+            marginBottom: '4px' // Tiny margin
+          }}>
+            <button 
+              onClick={() => navigate('/landing')}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#9CA3AF',
+                fontSize: '14px',
+                cursor: 'pointer',
+                padding: '2px 8px' // Tiny padding
+              }}
+            >
+              Quit
+            </button>
           </div>
 
-          {/* Check-in Progress Bar */}
-          <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+          {/* Progress Bar - Ultra thin */}
+          <div style={{ 
+            width: '100%', 
+            height: '3px', // Ultra thin
+            backgroundColor: '#E5E7EB', 
+            borderRadius: '2px', 
+            marginBottom: '6px', // Tiny margin
+            overflow: 'hidden'
+          }}>
             <div
-              className="bg-green-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${((currentCheckIn + 1) / checkIns.length) * 100}%` }}
+              style={{
+                height: '100%',
+                backgroundColor: '#FB923C',
+                borderRadius: '2px',
+                width: `${((currentCheckIn + 1) / checkIns.length) * 100}%`,
+                transition: 'width 300ms ease'
+              }}
             />
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-6">
+          {/* Main Content Container - Maximum width, minimal padding */}
+          <div style={{
+            maxWidth: '1400px', // Even wider
+            width: '100%',
+            margin: '0 auto',
+            backgroundColor: 'white',
+            borderRadius: '8px', // Smaller radius
+            padding: '16px 32px', // Much less padding
+            boxShadow: '0 1px 4px rgba(0, 0, 0, 0.08)', // Lighter shadow
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            minHeight: 0
+          }}>
             {(() => {
               const currentQ = checkIns[currentCheckIn];
               const hasAnswered = checkInAnswers[currentQ.id] !== undefined;
               const feedback = getCheckInFeedback(currentQ.id);
+              const selectedAnswer = checkInAnswers[currentQ.id];
+              const correctAnswer = currentQ.correctIndex;
 
               return (
                 <>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">
-                    {currentQ.prompt}
-                  </h3>
-                  
-                  <div className="space-y-3">
+                  {/* Question Section - Compact horizontal layout */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '32px',
+                    marginBottom: '12px' // Minimal margin
+                  }}>
+                    {/* Question Text */}
+                    <div style={{ flex: 2 }}> {/* Even more space for text */}
+                      <p style={{
+                        fontSize: '18px', // Smaller font
+                        fontWeight: '500',
+                        color: '#374151',
+                        lineHeight: '1.2', // Tighter line height
+                        margin: 0,
+                        marginBottom: '4px'
+                      }}>
+                        {currentQ.prompt}
+                      </p>
+                      <p style={{
+                        fontSize: '14px', // Smaller subtitle
+                        color: '#6B7280',
+                        fontWeight: '500',
+                        margin: 0
+                      }}>
+                        This is an example of?
+                      </p>
+                    </div>
+                    
+                    {/* Illustration - Smaller */}
+                    <div style={{
+                      width: '100px', // Smaller
+                      height: '65px', // Smaller
+                      backgroundColor: '#FEF3C7',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <div style={{
+                        width: '50px',
+                        height: '40px',
+                        backgroundColor: '#F59E0B',
+                        borderRadius: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <div style={{
+                          width: '25px',
+                          height: '25px',
+                          backgroundColor: '#D97706',
+                          borderRadius: '50%'
+                        }} />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Answer Options Grid - Compact */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '12px', // Smaller gap
+                    marginBottom: '8px' // Minimal margin
+                  }}>
                     {currentQ.options.map((option, index) => {
-                      const isSelected = checkInAnswers[currentQ.id] === index;
-                      const isCorrect = index === currentQ.correctIndex;
+                      const isSelected = selectedAnswer === index;
+                      const isCorrect = index === correctAnswer;
                       
-                      let buttonClass = "w-full text-left p-4 rounded-lg border transition-colors ";
-                      
-                      if (!hasAnswered && !isSubmittingAnswer) {
-                        buttonClass += "border-gray-300 hover:border-blue-500 hover:bg-blue-50";
+                      let buttonStyle = {
+                        padding: '12px 16px', // Less padding
+                        borderRadius: '8px', // Smaller radius
+                        border: '1px solid #D1D5DB',
+                        backgroundColor: '#FFFFFF',
+                        color: '#374151',
+                        fontSize: '14px', // Smaller font
+                        fontWeight: '500',
+                        cursor: hasAnswered ? 'default' : 'pointer',
+                        textAlign: 'left' as const,
+                        width: '100%',
+                        transition: 'all 150ms ease',
+                        minHeight: '44px', // Shorter buttons
+                        display: 'flex',
+                        alignItems: 'center',
+                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)', // Lighter shadow
+                        position: 'relative' as const,
+                        overflow: 'hidden'
+                      };
+
+                      // ...existing code... (state styling remains the same)
+                      if (hasAnswered) {
+                        if (isSelected && isCorrect) {
+                          buttonStyle = {
+                            ...buttonStyle,
+                            backgroundColor: '#10B981',
+                            borderColor: '#059669',
+                            color: 'white',
+                            boxShadow: '0 2px 8px rgba(16, 185, 129, 0.2)'
+                          };
+                        } else if (isSelected && !isCorrect) {
+                          buttonStyle = {
+                            ...buttonStyle,
+                            backgroundColor: '#EF4444',
+                            borderColor: '#DC2626',
+                            color: 'white',
+                            boxShadow: '0 2px 8px rgba(239, 68, 68, 0.2)'
+                          };
+                        } else if (!isSelected && isCorrect) {
+                          buttonStyle = {
+                            ...buttonStyle,
+                            backgroundColor: '#F0FDF4',
+                            borderColor: '#10B981',
+                            color: '#065F46',
+                            boxShadow: '0 1px 3px rgba(16, 185, 129, 0.1)'
+                          };
+                        } else {
+                          buttonStyle = {
+                            ...buttonStyle,
+                            backgroundColor: '#F9FAFB',
+                            borderColor: '#E5E7EB',
+                            color: '#9CA3AF',
+                            cursor: 'not-allowed',
+                            opacity: 0.7
+                          };
+                        }
                       } else {
                         if (isSelected) {
-                          buttonClass += isCorrect 
-                            ? "border-green-500 bg-green-100 text-green-800"
-                            : "border-red-500 bg-red-100 text-red-800";
-                        } else if (isCorrect) {
-                          buttonClass += "border-green-500 bg-green-50 text-green-700";
-                        } else {
-                          buttonClass += "border-gray-300 bg-gray-50 text-gray-500";
+                          buttonStyle = {
+                            ...buttonStyle,
+                            backgroundColor: '#EBF8FF',
+                            borderColor: '#3B82F6',
+                            color: '#1E40AF',
+                            boxShadow: '0 2px 8px rgba(59, 130, 246, 0.15)'
+                          };
                         }
                       }
 
@@ -286,48 +551,119 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
                         <button
                           key={index}
                           onClick={() => !hasAnswered && !isSubmittingAnswer && handleCheckInAnswer(currentQ.id, index)}
+                          style={buttonStyle}
                           disabled={hasAnswered || isSubmittingAnswer}
-                          className={buttonClass}
+                          onMouseEnter={(e) => {
+                            if (!hasAnswered && !isSelected) {
+                              e.currentTarget.style.borderColor = '#9CA3AF';
+                              e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+                              e.currentTarget.style.transform = 'translateY(-1px)';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!hasAnswered && !isSelected) {
+                              e.currentTarget.style.borderColor = '#D1D5DB';
+                              e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.05)';
+                              e.currentTarget.style.transform = 'translateY(0)';
+                            }
+                          }}
                         >
-                          <div className="flex items-center justify-between">
-                            <span>{option}</span>
-                            {isSubmittingAnswer && isSelected && (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
-                            )}
-                          </div>
+                          <span style={{ flex: 1 }}>{option}</span>
+                          {isSubmittingAnswer && isSelected && (
+                            <div style={{
+                              marginLeft: '8px',
+                              width: '14px',
+                              height: '14px',
+                              border: '2px solid transparent',
+                              borderTop: '2px solid currentColor',
+                              borderRadius: '50%',
+                              animation: 'spin 1s linear infinite'
+                            }} />
+                          )}
                         </button>
                       );
                     })}
                   </div>
 
-                  {feedback && (
-                    <div className={`mt-4 p-3 rounded-lg ${
-                      feedback.isCorrect 
-                        ? 'bg-green-100 text-green-800 border border-green-200'
-                        : 'bg-red-100 text-red-800 border border-red-200'
-                    }`}>
-                      <div className="flex items-center">
-                        <svg 
-                          className={`w-5 h-5 mr-2 ${feedback.isCorrect ? 'text-green-600' : 'text-red-600'}`}
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                        >
-                          {feedback.isCorrect ? (
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          ) : (
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          )}
-                        </svg>
-                        {feedback.message}
-                        {feedback.isCorrect && userTotalXP !== null && (
-                          <span className="ml-2 text-sm font-semibold">
-                            (Total: {userTotalXP} XP)
+                  {/* Feedback and Next Button - Ultra compact row */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    minHeight: '36px' // Shorter fixed height
+                  }}>
+                    {/* Feedback - Compact */}
+                    <div style={{ flex: 1, marginRight: '16px' }}>
+                      {feedback && (
+                        <div style={{
+                          backgroundColor: feedback.isCorrect ? '#ECFDF5' : '#FEF2F2',
+                          border: `1px solid ${feedback.isCorrect ? '#10B981' : '#EF4444'}`,
+                          borderRadius: '6px', // Smaller radius
+                          padding: '6px 12px', // Less padding
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}>
+                          <div style={{
+                            width: '14px', // Smaller icon
+                            height: '14px',
+                            borderRadius: '50%',
+                            backgroundColor: feedback.isCorrect ? '#10B981' : '#EF4444',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'white',
+                            fontSize: '9px', // Tiny font
+                            fontWeight: 'bold',
+                            flexShrink: 0
+                          }}>
+                            {feedback.isCorrect ? '✓' : '✗'}
+                          </div>
+                          <span style={{
+                            color: feedback.isCorrect ? '#065F46' : '#991B1B',
+                            fontWeight: '500',
+                            fontSize: '13px' // Smaller text
+                          }}>
+                            {feedback.message}
                           </span>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
-                  )}
+
+                    {/* Next Question Button - Compact */}
+                    {hasAnswered && !isSubmittingAnswer && (
+                      <button
+                        onClick={handleNextQuestion}
+                        style={{
+                          backgroundColor: '#3B82F6',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '16px', // Smaller radius
+                          padding: '8px 20px', // Less padding
+                          fontSize: '13px', // Smaller font
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                          transition: 'all 200ms ease',
+                          flexShrink: 0
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.backgroundColor = '#2563EB';
+                          e.currentTarget.style.transform = 'translateY(-1px)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.backgroundColor = '#3B82F6';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                        }}
+                      >
+                        {currentCheckIn < checkIns.length - 1 ? 'Next Question' : 'Finish Quiz'}
+                        <span style={{ fontSize: '9px' }}>→</span>
+                      </button>
+                    )}
+                  </div>
                 </>
               );
             })()}
@@ -337,41 +673,101 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
 
       {/* Completion Section */}
       {showCheckIns && currentCheckIn >= checkIns.length && (
-        <div className="text-center py-8">
-          <div className="mb-6">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="lesson-content__completion">
+          <div className="lesson-content__completion-content">
+            <div className="lesson-content__completion-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">
-              Lesson Complete! 🎉
+            <h3 className="lesson-content__completion-title">
+              {isRetaking ? 'Lesson Retaken! 🔄' : 'Lesson Complete! 🎉'}
             </h3>
-            <p className="text-gray-600 mb-4">
-              You've completed all sections and check-ins for this lesson.
+            <p className="lesson-content__completion-text">
+              {isRetaking 
+                ? "Great job going through the lesson again! Your progress is always tracked."
+                : "You've completed all sections and check-ins for this lesson."
+              }
             </p>
+
+            {/* Completion Status Badge */}
+            {lessonProgress?.completed && (
+              <div className="lesson-content__completion-badge">
+                <svg className="lesson-content__completion-badge-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Previously Completed</span>
+                {lessonProgress.completionCount > 1 && (
+                  <span className="lesson-content__completion-count">
+                    (Attempt #{lessonProgress.completionCount + 1})
+                  </span>
+                )}
+              </div>
+            )}
             
             {/* XP Summary */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 inline-block">
-              <div className="flex items-center justify-center">
-                <svg className="w-6 h-6 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="lesson-content__xp-summary">
+              <div className="lesson-content__xp-summary-content">
+                <svg className="lesson-content__xp-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                 </svg>
-                <span className="text-lg font-semibold text-yellow-800">
-                  XP Earned This Lesson: {totalXP}
+                <span className="lesson-content__xp-summary-text">
+                  XP Earned This Attempt: {totalXP}
                 </span>
               </div>
               {userTotalXP !== null && (
-                <div className="text-sm text-yellow-700 mt-1">
+                <div className="lesson-content__xp-total">
                   Your Total XP: {userTotalXP}
+                </div>
+              )}
+              {lessonProgress?.bestScore && totalXP > lessonProgress.bestScore && (
+                <div className="lesson-content__new-record">
+                  🎯 New Personal Best! (Previous: {lessonProgress.bestScore} XP)
                 </div>
               )}
             </div>
 
             {/* Results Summary */}
-            <div className="text-sm text-gray-600 mb-6">
+            <div className="lesson-content__results">
               Correct Answers: {Object.values(checkInResults).filter(Boolean).length} / {checkIns.length}
             </div>
+
+            {/* Action Buttons */}
+            <div className="lesson-content__completion-actions">
+              {nextLesson && (
+                <button
+                  onClick={() => handleNavigateFromCompletion('next')}
+                  className="btn lesson-content__next-btn"
+                >
+                  Next Lesson: {nextLesson.title}
+                  <svg className="lesson-content__next-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              )}
+              
+              <button
+                onClick={() => handleNavigateFromCompletion('home')}
+                className={`btn-ghost--underline lesson-content__home-btn ${nextLesson ? '' : 'lesson-content__home-btn--primary'}`}
+              >
+                {nextLesson ? 'Back to Home' : 'Continue Learning'}
+              </button>
+
+              {/* Retake Button */}
+              <button
+                onClick={() => window.location.reload()}
+                className="btn-ghost--underline lesson-content__retake-btn"
+              >
+                🔄 Retake Lesson
+              </button>
+            </div>
+
+            {loadingNextLesson && (
+              <div className="lesson-content__loading-next">
+                <div className="lesson-content__spinner"></div>
+                <span>Loading next lesson...</span>
+              </div>
+            )}
           </div>
         </div>
       )}
