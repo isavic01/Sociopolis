@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LessonContent as LessonContentType, LessonCheckIn } from '../lesson';
 import { LessonService } from '../services/lessonService';
-import { getUserXP } from '../../services/xpService';
+import { getUserXP, getLeaderboardStatus } from '../../services/xpService';
+import { LeaderboardNotification } from './LeaderboardNotification';
 
 interface LessonContentProps {
   lesson: LessonContentType;
@@ -131,6 +132,9 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
         
         if (result.totalXP !== undefined) {
           setUserTotalXP(result.totalXP);
+          
+          // Check leaderboard status after earning XP
+          checkLeaderboardStatus(result.totalXP);
         }
       }
 
@@ -146,6 +150,39 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
         delete newAnswers[checkInId];
         return newAnswers;
       });
+    }
+  };
+
+  const checkLeaderboardStatus = async (currentXP: number) => {
+    try {
+      const status = await getLeaderboardStatus(userId);
+      
+      if (status.onLeaderboard && status.rank) {
+        // Only show notification if rank changed
+        if (previousRank === null) {
+          // User just joined the leaderboard
+          setLeaderboardMessage(`🎉 Congratulations! You've joined the leaderboard at #${status.rank}!`);
+          setNotificationType('success');
+          setShowLeaderboardNotification(true);
+          setPreviousRank(status.rank);
+        } else if (status.rank < previousRank) {
+          // User moved up in rank (lower number = better rank)
+          const spotsGained = previousRank - status.rank;
+          setLeaderboardMessage(`🚀 You moved up ${spotsGained} ${spotsGained === 1 ? 'spot' : 'spots'}! Now #${status.rank}!`);
+          setNotificationType('success');
+          setShowLeaderboardNotification(true);
+          setPreviousRank(status.rank);
+        } else if (status.rank > previousRank) {
+          // User moved down - just update rank silently, no notification
+          setPreviousRank(status.rank);
+        }
+        // If rank is same as before, don't show notification
+      } else if (!status.onLeaderboard && previousRank !== null) {
+        // User fell off the leaderboard - just update silently, no notification
+        setPreviousRank(null);
+      }
+    } catch (error) {
+      console.error('Error checking leaderboard status:', error);
     }
   };
 
@@ -771,6 +808,7 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
