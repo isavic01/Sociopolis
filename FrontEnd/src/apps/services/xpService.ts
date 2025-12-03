@@ -60,83 +60,32 @@ export async function getUserXP(userId: string): Promise<number> {
   }
 }
 
-/**
- * Checks if a user is eligible for the leaderboard by comparing their XP
- * against the current last place holder
- */
-async function checkLeaderboardEligibility(
-  userId: string, 
-  userXP: number, 
-  userName: string
-): Promise<{ eligible: boolean; message: string; rank?: number }> {
+export async function resetUserXP(userId: string): Promise<void> {
   try {
-    // Get current leaderboard
-    const leaderboardRef = doc(db, 'leaderboard', 'top10');
-    const leaderboardSnap = await getDoc(leaderboardRef);
+    console.log(`🔄 Resetting XP for user ${userId}`);
     
-    if (!leaderboardSnap.exists()) {
-      console.log(`📋 No leaderboard exists yet - user automatically qualifies`);
-      return { 
-        eligible: true, 
-        message: `🎉 Congratulations! You're now on the leaderboard!`,
-        rank: 1
-      };
-    }
-
-    const leaderboardData = leaderboardSnap.data();
-    const topUserIds: string[] = leaderboardData.topUserIds || [];
+    const userRef = doc(db, 'users', userId);
+    const userSnap = await getDoc(userRef);
     
-    // If leaderboard has less than 10 users, user automatically qualifies
-    if (topUserIds.length < 10) {
-      console.log(`📋 Leaderboard has ${topUserIds.length} users - user automatically qualifies`);
-      return { 
-        eligible: true, 
-        message: `🎉 You've made it onto the leaderboard!`,
-        rank: topUserIds.length + 1
-      };
+    if (!userSnap.exists()) {
+      throw new Error('user not found');
     }
 
-    // Get the last place user's XP
-    const lastPlaceUserId = topUserIds[topUserIds.length - 1];
-    const lastPlaceUserRef = doc(db, 'users', lastPlaceUserId);
-    const lastPlaceUserSnap = await getDoc(lastPlaceUserRef);
-    
-    if (!lastPlaceUserSnap.exists()) {
-      console.log(`⚠️ Last place user not found`);
-      return { eligible: false, message: 'Unable to check leaderboard status' };
-    }
+    console.log(`💰 Resetting XP to 0 for user ${userId}`);
 
-    const lastPlaceUserData = lastPlaceUserSnap.data();
-    const lastPlaceXP = lastPlaceUserData.xp || 0;
-    const lastPlaceName = lastPlaceUserData.displayName || 'Anonymous';
+    await updateDoc(userRef, {
+      xp: 0,
+      updatedAt: serverTimestamp(),
+    });
 
-    console.log(`🔍 Leaderboard check: User ${userName} (${userXP} XP) vs Last Place ${lastPlaceName} (${lastPlaceXP} XP)`);
+    console.log(`✅ User XP reset to 0 successfully`);
 
-    // Check if user has more XP than last place
-    if (userXP > lastPlaceXP) {
-      console.log(`✅ User has more XP than last place! Moving to leaderboard.`);
-      return { 
-        eligible: true, 
-        message: `🎉 Congratulations! You've surpassed ${lastPlaceName} and are now on the leaderboard with ${userXP} XP!`,
-        rank: 10
-      };
-    } else if (userXP === lastPlaceXP) {
-      console.log(`⚖️ User tied with last place`);
-      return { 
-        eligible: false, 
-        message: `You're tied with ${lastPlaceName} at ${userXP} XP. Keep earning to move up!`
-      };
-    } else {
-      const xpNeeded = lastPlaceXP - userXP + 1;
-      console.log(`❌ User needs ${xpNeeded} more XP to make the leaderboard`);
-      return { 
-        eligible: false, 
-        message: `You need ${xpNeeded} more XP to beat ${lastPlaceName} and join the leaderboard!`
-      };
-    }
+    await updateLeaderboard();
+    console.log(`🏆 Leaderboard updated after XP reset`);
+
   } catch (err) {
-    console.error('❌ Error checking leaderboard eligibility:', err);
-    return { eligible: false, message: 'Error checking leaderboard status' };
+    console.error('❌ Error resetting user XP:', err);
+    throw err;
   }
 }
 

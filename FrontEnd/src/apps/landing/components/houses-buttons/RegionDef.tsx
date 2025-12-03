@@ -11,9 +11,9 @@ export const REGIONS = [
     y: '45%', 
     icon: <BlueHouse />,   
     initialProgress: 0,
-    lessonId: 'communication-basics',
-    title: 'Communication Skills',
-    description: 'Learn effective communication techniques',
+    lessonId: 'unit-1-why-people-do-what-they-do',
+    title: 'Why People Do What They Do',
+    description: 'Explore how culture, socialization, and groups shape behavior',
     color: 'blue',
     difficulty: 'beginner'
   },

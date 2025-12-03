@@ -1,0 +1,205 @@
+{
+  "id": "unit-1-why-people-do-what-they-do",
+  "title": "Unit 1: Why People Do What They Do",
+  "description": "Students explore how culture, socialization, groups, and norms shape everyday behavior, then learn to see patterns (the sociological imagination).",
+  "difficulty": "beginner",
+  "estimatedDuration": 50,
+  "tags": ["sociology", "culture", "norms", "socialization", "deviance", "groups"],
+  "videoUrl": "",
+  "imageUrl": "",
+  "sections": [
+    {
+      "id": "culture-and-norms",
+      "title": "Culture and Norms",
+      "content": "Understanding what makes up culture and how it guides behavior. Culture is the shared way of life of a group — beliefs, food, art, and rules. Norms are the rules for how to behave in a group, while values are the big ideas a group thinks are important."
+    },
+    {
+      "id": "socialization",
+      "title": "Socialization",
+      "content": "How people learn what's normal and who they are. Socialization is the process of learning how to behave in society through agents like family, teachers, media, and friends. We learn our roles, status, and identity through this process."
+    },
+    {
+      "id": "deviance-and-rules",
+      "title": "Deviance & Rules",
+      "content": "What happens when people break norms. Deviance is behavior that breaks rules or norms, and society uses social control mechanisms like sanctions to maintain order. Understanding conformity and labeling theory helps us see how society shapes behavior."
+    },
+    {
+      "id": "groups-and-belonging",
+      "title": "Groups & Belonging",
+      "content": "How groups influence our identity and choices. We belong to primary groups (close relationships) and secondary groups (larger, goal-focused). Understanding in-groups, out-groups, and reference groups helps explain social behavior."
+    },
+    {
+      "id": "seeing-the-bigger-picture",
+      "title": "Seeing the Bigger Picture",
+      "content": "Tying it all together — connecting personal life to society. The sociological imagination helps us see how personal experiences link to larger social patterns and understand society's structure and institutions."
+    }
+  ],
+  "checkIns": [
+    {
+      "id": "culture-sushi-question",
+      "prompt": "People in Japan often eat together and use chopsticks. This is an example of...",
+      "options": [
+        "A natural instinct",
+        "A habit", 
+        "Culture",
+        "A rule"
+      ],
+      "correctIndex": 2,
+      "xpReward": 10,
+      "feedback": {
+        "correct": "Right! Culture means the shared way of life — including food, customs, and traditions.",
+        "incorrect": "Not quite. Culture is the shared way of life of a group, including their beliefs, food, art, and rules."
+      }
+    },
+    {
+      "id": "norms-hand-raising",
+      "prompt": "In class, students raise their hands before speaking. That's an example of a...",
+      "options": [
+        "Norm",
+        "Value",
+        "Culture",
+        "Rule made by nature"
+      ],
+      "correctIndex": 0,
+      "xpReward": 10,
+      "feedback": {
+        "correct": "Exactly! Norms are rules that guide how people behave in a group.",
+        "incorrect": "Try again. Norms are the specific rules for how to behave in a group or situation."
+      }
+    },
+    {
+      "id": "values-honesty",
+      "prompt": "A community believes being honest is more important than being popular. What are they showing?",
+      "options": [
+        "A law",
+        "A rule",
+        "A value",
+        "A material culture item"
+      ],
+      "correctIndex": 2,
+      "xpReward": 10,
+      "feedback": {
+        "correct": "Right! Values are the big ideas people think are important — like honesty or respect.",
+        "incorrect": "Not quite. Values are the fundamental beliefs about what's important in life."
+      }
+    },
+    {
+      "id": "material-culture",
+      "prompt": "Looking at a smartphone and the concept of 'freedom' — which shows material culture?",
+      "options": [
+        "Smartphone",
+        "Freedom",
+        "Both",
+        "Neither"
+      ],
+      "correctIndex": 0,
+      "xpReward": 10,
+      "feedback": {
+        "correct": "Correct! Material culture includes the physical things people make or use, like smartphones.",
+        "incorrect": "Remember: Material culture is the physical stuff we can touch, while nonmaterial culture includes ideas and beliefs."
+      }
+    },
+    {
+      "id": "different-traditions",
+      "prompt": "Why might two families have different holiday traditions?",
+      "options": [
+        "They like different foods",
+        "They belong to different cultures",
+        "They live in the same culture",
+        "They forgot the rules"
+      ],
+      "correctIndex": 1,
+      "xpReward": 10,
+      "feedback": {
+        "correct": "Correct! Culture shapes what we eat, celebrate, and believe.",
+        "incorrect": "Think about what shapes our traditions and celebrations - it's our cultural background."
+      }
+    },
+    {
+      "id": "ethnocentrism-vs-relativism",
+      "prompt": "One student says, 'That food looks weird!' Another says, 'It's just different.' The first shows ___; the second shows ___.",
+      "options": [
+        "Ethnocentrism / Cultural Relativism",
+        "Cultural Relativism / Ethnocentrism",
+        "Norm / Value",
+        "Material / Nonmaterial"
+      ],
+      "correctIndex": 0,
+      "xpReward": 15,
+      "feedback": {
+        "correct": "Exactly! Next time someone says something is weird, think about whether it's ethnocentrism or just difference.",
+        "incorrect": "Not quite. Ethnocentrism means judging another culture by your own; cultural relativism means understanding it on its own terms."
+      }
+    },
+    {
+      "id": "similar-behavior",
+      "prompt": "Why do people in the same culture often act in similar ways?",
+      "options": [
+        "They share norms and values that guide behavior",
+        "They copy each other by accident",
+        "They all have the same personality",
+        "The government tells them to"
+      ],
+      "correctIndex": 0,
+      "xpReward": 10,
+      "feedback": {
+        "correct": "Right! Culture provides shared ideas and rules that shape behavior.",
+        "incorrect": "Think about what culture provides - shared guidelines for how to behave and what's important."
+      }
+    }
+  ],
+  "vocabulary": [
+    {
+      "term": "Culture",
+      "definition": "The shared way of life of a group — beliefs, food, art, and rules",
+      "example": "In Japan, bowing is part of the culture"
+    },
+    {
+      "term": "Norms", 
+      "definition": "Rules for how to behave in a group",
+      "example": "Say 'thank you' after getting help"
+    },
+    {
+      "term": "Values",
+      "definition": "The big ideas a group thinks are important", 
+      "example": "Honesty or Respect"
+    },
+    {
+      "term": "Material Culture",
+      "definition": "The physical things people make or use",
+      "example": "Phones, clothes, buildings"
+    },
+    {
+      "term": "Nonmaterial Culture", 
+      "definition": "The invisible parts — ideas, beliefs, language",
+      "example": "Freedom, fairness, slang"
+    },
+    {
+      "term": "Ethnocentrism",
+      "definition": "Thinking your culture is better than others",
+      "example": "Our way is the only right way"
+    },
+    {
+      "term": "Cultural Relativism",
+      "definition": "Trying to understand a culture on its own terms", 
+      "example": "Different doesn't mean wrong"
+    },
+    {
+      "term": "Socialization",
+      "definition": "Learning how to behave in society",
+      "example": "Kids learn to say 'please'"
+    },
+    {
+      "term": "Agents of Socialization",
+      "definition": "The people or groups that teach us the rules",
+      "example": "Family, teachers, media, friends"
+    },
+    {
+      "term": "Sociological Imagination",
+      "definition": "Seeing how personal experiences link to larger social patterns",
+      "example": "Not just 'I'm stressed,' but 'Many students are under pressure'"
+    }
+  ],
+  "createdAt": "2024-12-02T00:00:00Z",
+  "updatedAt": "2024-12-02T00:00:00Z"
+}
