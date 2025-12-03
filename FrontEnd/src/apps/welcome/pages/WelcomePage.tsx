@@ -5,14 +5,12 @@ export default function WelcomePage() {
 
   return (
   <div className="w-full h-screen">
-  {/* Slide 1 */}
   <section className="relative min-h-screen overflow-hidden">
-    {/* Logo */}
     <div className="absolute top-8 left-8 z-20">
       <img src="/src/assets/svg/Sociopolis.svg" alt="Sociopolis Logo" className="h-6 sm:h-8 md:h-10 lg:h-12 w-auto" />
     </div>
 
-    {/* Content */}
+
     <div className="relative grid grid-cols-1 md:grid-cols-2 gap-8 min-h-screen md:px-16 z-20">
       <div className="flex justify-center mt-[40vh]">
         <img src="/src/assets/soci.png" alt="Soci character" className="max-h-[400px] w-auto" />
@@ -32,7 +30,7 @@ export default function WelcomePage() {
       </div>
     </div>
 
-    {/* Skyline at bottom of first slide */}
+
     <div
       className="absolute bottom-0 left-0 w-full h-[400px] bg-repeat-x bg-bottom z-0 opacity-30"
       style={{
@@ -43,9 +41,7 @@ export default function WelcomePage() {
     />
   </section>
 
-  {/* Slide 2 */}
   <section className="min-h-screen bg-white flex flex-col items-center mt-[10vh] px-6">
-  {/* Slide 2 content */}
   <h1 className="h2 text-center max-w-[40vw] mb-6">
     Our Goals
   </h1>
@@ -68,18 +64,16 @@ export default function WelcomePage() {
     backgroundSize: "100% 100%"
   }}
 >
-  {/* Heading */}
+
   <h1 className="h2 max-w-[40vw] mb-6 self-start mb-10 pl-32">
     Meet The Team
   </h1>
 
-  {/* Description */}
   <p className="text-center max-w-4xl mb-4 text-2xl pt-16 pb-32">
     Born at the University of Florida, Sociopolis is open‑source software
     making learning more accessible and enjoyable.
   </p>
 
-  {/* Team grid */}
   <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
     <img
       src="/src/assets/testTeammemebr.jpeg"

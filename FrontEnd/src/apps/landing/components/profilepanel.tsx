@@ -101,21 +101,19 @@ export const ProfilePanel = () => {
         </div>
       </div>
 
-      {/* Current lesson */}
       <div className="rounded-lg p-2">
         <h5 className="!text-lg font-bold mb-2">Current Lesson</h5>
         <p className="!text-sm text-gray-700">{profile.currentLesson}</p>
       </div>
 
-      {/* Streaks */}
       <div className="p-2 mb-6">
         <h5 className="font-semibold mb-2">Streaks</h5>
         <div className="h-[25vh] bg-white rounded-lg flex items-center justify-center">
-          {/*{profile.streaks > 0 ? `${profile.streaks} day streak 🔥` : "No streak yet"}*/}
+          {/*{profile.streaks > 0 ? `${profile.streaks} day streak ` : "No streak yet"}*/} // Placeholder for streaks visualization
         </div>
       </div>
 
-      {/* Sign out */}
+
       <button
         onClick={confirmSignOut}
         className="w-full bg-red-500 text-white py-2 font-semibold rounded-lg hover:bg-red-600 transition"
@@ -123,7 +121,6 @@ export const ProfilePanel = () => {
         SIGN OUT
       </button>
 
-      {/* Modal */}
       {showConfirmModal && (
         <div className="fixed inset-0 bg-gray-100/80 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-80 shadow-lg">

@@ -249,14 +249,10 @@ export default function LandingPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Lottie overlay container — element is inserted by useEffect */}
       <div ref={lottieContainerRef} aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
-      {/* 🧭 Navigation and background */}
       <HamburgerButton onClick={() => setMenuOpen(!menuOpen)} />
       <SideMenu isOpen={menuOpen} />
-      <Background /> {/* ✅ Kept intact and in full view */}
-
-      {/* 🏠 Clickable SVG Houses with Enhanced Styling */}
+      <Background />
       {REGIONS.map((region) => (
         <div
           key={region.id}
@@ -285,7 +281,6 @@ export default function LandingPage() {
                 : region.icon}
             </div>
 
-            {/* Progress Ring (optional - can be connected to actual progress later) */}
             <div className="absolute inset-0 -z-10">
               <svg className="w-full h-full" viewBox="0 0 100 100">
                 <circle
@@ -311,7 +306,6 @@ export default function LandingPage() {
             </div>
           </motion.button>
 
-          {/* Tooltip on Hover */}
           <AnimatePresence>
             {hoveredRegion === region.id && (
               <motion.div
@@ -347,7 +341,7 @@ export default function LandingPage() {
                     </svg>
                   </div>
                 </div>
-                {/* Tooltip Arrow */}
+
                 <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white/95 rotate-45 border-t-2 border-l-2 border-white/50"></div>
               </motion.div>
             )}

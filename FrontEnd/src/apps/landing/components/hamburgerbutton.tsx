@@ -5,7 +5,7 @@ export const HamburgerButton = ({ onClick }: { onClick: () => void }) => (
     aria-label="Toggle menu"
   >
     <img
-      src="/src/assets/svg/hamburger.svg" // adjust path as needed
+      src="/src/assets/svg/hamburger.svg"
       alt="Menu Expand Button"
       className=""
     />
