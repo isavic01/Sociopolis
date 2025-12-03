@@ -5,9 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { HamburgerButton } from '../components/hamburgerbutton';
 import { SideMenu } from '../components/sidemenu';
 import { Background } from '../components/background';
+import { LeaderboardRankMonitor } from '../components/leaderboardrankmonitor';
 
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../../services/firebaseConfig';
+import { useAuthContext } from '../../auth/components/authProvider';
 
 import { REGIONS } from '@/apps/landing/components/houses-buttons/RegionDef';
 

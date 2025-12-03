@@ -37,6 +37,19 @@ export interface LessonProgress {
   timeSpent: number; // in minutes
   score?: number;
   lastAccessedAt: Date;
+  // New fields for re-attempt support
+  completionCount: number; // How many times they've completed it
+  bestScore?: number; // Best score achieved
+  attempts: LessonAttempt[]; // History of attempts
+}
+
+export interface LessonAttempt {
+  attemptId: string;
+  startedAt: Date;
+  completedAt?: Date;
+  score: number;
+  timeSpent: number;
+  checkInResults: Record<string, boolean>; // checkInId -> correct/incorrect
 }
 
 export interface Quiz {
