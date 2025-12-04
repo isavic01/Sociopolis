@@ -809,6 +809,6 @@ export function LessonContent({ lesson, onComplete, isCompleted, userId }: Lesso
         </div>
       )}
       </div>
-    </>
+    
   );
 }
