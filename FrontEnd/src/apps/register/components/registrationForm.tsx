@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { SubmitButton } from './buttons'
 import { TermsModal } from './terms'
 import { PrivacyModal } from './terms'
-import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth' // adjust path as needed
-import { auth, db } from '../../services/firebaseConfig' // adjust path as needed (can move later)
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth'
+import { auth, db } from '../../services/firebaseConfig'
 import { useNavigate } from 'react-router-dom'
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 
@@ -76,18 +76,6 @@ export default function RegisterScreen() {
       <h2 className="h3 font-normal text-2xl">Let's create an account to get started.</h2>
       <img className="h-auto w-35" src="/src/assets/soci.png"></img>
 
-      {/* Migration : replace inline layout utilities with the shared form classes below
-          Example (drop-in):
-          <form claform__label" htmlFor="name">Display name</label>
-              <input id="name" className="form__input" placeholder="Display-Name (Public)" />
-              <div className="form__hint">small helper text</div>
-            </div>
-
-            <div className="form__actions">
-              <button type="submit" className="btn-cta btn-block">Register</button>
-            </div>
-          </form>
-      */}
       <form onSubmit={handleRegister} className="flex flex-col justify-center items-center gap-y-2">
         <input
           className="form-input"

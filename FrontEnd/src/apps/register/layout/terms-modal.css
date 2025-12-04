@@ -1,4 +1,4 @@
-/* Overlay background */
+
 .terms-overlay {
   position: fixed;
   top: 0;
@@ -14,7 +14,7 @@
 }
 
 
-/* Modal box */
+
 .terms-box {
   background-color: #ffffff;
   width: 90%;
@@ -27,14 +27,13 @@
 }
 
 
-/* Ordered list styling */
 .ordered-list {
   list-style-type: decimal;
   padding-left: 4rem;
   margin-bottom: 1rem;
 }
 
-/* Unordered list styling */
+
 .unordered-list {
   list-style-type: disc;
   padding-left: 1.5rem;

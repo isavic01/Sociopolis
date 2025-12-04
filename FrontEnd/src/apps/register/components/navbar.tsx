@@ -7,7 +7,7 @@ export const Navbar = () => {
   return (
     <nav className="w-full z-50 flex justify-between h-24">
       <img
-        src="/src/assets/svg/Backarrow.svg" //replace with back button img
+        src="/src/assets/svg/Backarrow.svg"
         alt="Back"
         className="mx-6 my-8 w-8 h-8"
         onClick={() => navigate(-1)} // navigates to previous page
