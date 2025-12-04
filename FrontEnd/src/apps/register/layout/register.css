@@ -1,4 +1,4 @@
-/* Page layout */
+
 .register-page {
   background-color: #ffffff;
   padding-left: 15vw;
@@ -6,7 +6,6 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* Navbar */
 .register-nav {
   position: fixed;
   top: 0;
@@ -28,9 +27,7 @@
 }
 
 
-/* Button styles moved to `src/styles/components/_button.scss` */
 
-/* Registration form container */
 .background-register {
   max-width: 40vw;
   margin: auto;
@@ -39,7 +36,7 @@
   border-radius: 8px;
 }
 
-/* Logo image */
+
 .soci {
   width: 10vw;
   height: 10vw;
@@ -47,7 +44,7 @@
   display: block;
 }
 
-/* Input fields */
+
 .input-box {
   width: 100%;
   padding: 0.75rem 1rem;
@@ -65,7 +62,7 @@
   outline: none;
 }
 
-/* Checkbox and links */
+
 .check-box {
   display: flex;
   gap: 0.5rem;
@@ -91,5 +88,3 @@
 .link:hover {
   color: #005a9e;
 }
-
-/* Submit/button element styles moved to `src/styles/components/_button.scss` */

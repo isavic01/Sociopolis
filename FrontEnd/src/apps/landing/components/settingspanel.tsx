@@ -243,7 +243,6 @@ async function handleToggleAdmin(newValue: boolean | null) {
         </div>
       </div>
 
-      {/* Feedback Report */}
       <div className="mt-8 max-w-[600px]">
         <textarea
           value={reportText}
@@ -270,12 +269,12 @@ async function handleToggleAdmin(newValue: boolean | null) {
 
 
 
-      {/* award xp */}
+
       {isAdmin && (
         <div className="mt-8 max-w-[600px] border-t pt-6">
           <h4 className="text-lg font-semibold mb-2">Admin Controls</h4>
 
-          {/* Search User */}
+
           <div className="mb-4">
             <input
               type="text"
@@ -293,7 +292,7 @@ async function handleToggleAdmin(newValue: boolean | null) {
             <p className="text-sm mt-2">{searchStatus}</p>
           </div>
 
-          {/* Award/Remove XP */}
+
           {targetUser && (
             <div className="mb-4">
               <p className="text-sm text-gray-700 mb-2">
@@ -318,7 +317,7 @@ async function handleToggleAdmin(newValue: boolean | null) {
             </div>
           )}
 
-          {/* Delete User */}
+
           {targetUser && (
             <div className="mt-4">
               <button
@@ -354,7 +353,7 @@ async function handleToggleAdmin(newValue: boolean | null) {
 
 
 
-      {/* Delete Account */}
+
       <div className="mt-12 max-w-[600px] border-t pt-6">
         <h4 className="text-lg font-semibold mb-2">Delete Account</h4>
         <p className="text-sm text-gray-700 mb-4">
@@ -397,7 +396,7 @@ async function handleToggleAdmin(newValue: boolean | null) {
           </div>
         </div>
       )}
-      {/* Confirmation Modal */}
+
       {deletionTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/50"></div>
