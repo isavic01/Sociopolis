@@ -29,7 +29,10 @@ export async function awardXP(userId: string, xpAmount: number): Promise<number>
 
     console.log(`✅ User document updated with new XP: ${newXP}`);
 
-    // Update leaderboard to reflect new XP
+    // Check if user qualifies for leaderboard
+    const leaderboardStatus = await checkLeaderboardEligibility(userId, newXP, userData.displayName || 'Anonymous');
+    console.log(`🏆 Leaderboard check result:`, leaderboardStatus);
+
     await updateLeaderboard();
     console.log(`🏆 Leaderboard updated successfully`);
 
@@ -91,7 +94,7 @@ async function updateLeaderboard(): Promise<void> {
     console.log(`🔄 Updating leaderboard...`);
     
     const usersRef = collection(db, 'users');
-    const q = query(usersRef, orderBy('xp', 'desc'), limit(5));
+    const q = query(usersRef, orderBy('xp', 'desc'), limit(10));
     const querySnapshot = await getDocs(q);
 
     const topUserIds: string[] = [];
@@ -103,7 +106,7 @@ async function updateLeaderboard(): Promise<void> {
       userXPs.push({ id: doc.id, xp: data.xp || 0 });
     });
 
-    console.log(`📊 Top 5 users by XP:`, userXPs);
+    console.log(`📊 Top 10 users by XP:`, userXPs);
 
     await setDoc(doc(db, 'leaderboard', 'top10'), {
       topUserIds,
