@@ -256,12 +256,12 @@ export default function LandingPage() {
       {REGIONS.map((region) => (
         <div
           key={region.id}
-          className="absolute"
+          className="absolute z-20"
           style={{
             left: region.x,
-            top: region.y,
-            transform: 'translate(-50%, -50%)',
-            transformOrigin: 'center center',
+            bottom: region.bottom,
+            transform: 'translateX(-50%)',
+            transformOrigin: 'center bottom',
           }}
           onMouseEnter={() => setHoveredRegion(region.id)}
           onMouseLeave={() => setHoveredRegion(null)}
@@ -270,12 +270,15 @@ export default function LandingPage() {
             aria-label={region.ariaLabel}
             onClick={() => handleClick(region.lessonId)}
             className="relative cursor-pointer outline-none focus-visible:ring-4 focus-visible:ring-white/80 rounded-full"
-            whileHover={{ scale: 1.15 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            whileHover={{ scale: 1.12 }}
+            whileTap={{ scale: 0.96 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 18 }}
           >
             {/* House Icon */}
-            <div className="w-24 h-24 drop-shadow-lg hover:drop-shadow-2xl transition-all duration-300 filter hover:brightness-110">
+            <div
+              className="block drop-shadow-[0_12px_18px_rgba(39,58,78,0.18)] hover:drop-shadow-[0_16px_22px_rgba(39,58,78,0.24)] transition-all duration-300 filter hover:brightness-110"
+              style={{ width: region.size, height: 'auto', display: 'block' }}
+            >
               {React.isValidElement(region.icon)
                 ? region.icon
                 : region.icon}
